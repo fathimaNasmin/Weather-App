@@ -16,4 +16,5 @@ enum Fonts {
 	static let mediumLight = "Roboto-ExtraLight"
 	static let semiCondensedExtraLight = "Roboto_SemiCondensed-ExtraLight"
 	static let RobotoCondensedRegular = "Roboto_Condensed-Regular"
+	static let RobotoCondensedSemiBold = "Roboto_Condensed-SemiBold"
 }
