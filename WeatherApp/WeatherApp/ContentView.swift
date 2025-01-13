@@ -14,59 +14,91 @@ struct ContentView: View {
 				Gradients.cloudy
 				
 				VStack {
-					HStack(alignment: .bottom) {
-						// cloudy and temp
-						VStack {
-							HStack {
-								Image(systemName: "cloud")
-									.font(.largeTitle.weight(.thin))
-								
-								Text("Cloudy")
-									
-							}
-							.font(.custom(Fonts.mediumLight, size: 40))
-							
-							HStack(alignment: .top) {
-								Text("15")
-									.font(.custom(Fonts.mediumLight, size: 120))
-								
-								Image(systemName: "circle")
-									.padding(.top, 10)
-									.font(.system(size: 20))
-									.font(.largeTitle.weight(.thin))
-							}
-							.padding(.top, -5)
-							.font(.custom(Fonts.mediumLight, size: 40))
-						}
-						.padding()
-						.font(.largeTitle)
+					// MARK: Top Bar
+					HStack{
+						Image(systemName: "line.3.horizontal")
+							.font(.title.weight(.thin))
 						
-						// low and high
+						Spacer()
+						
 						VStack {
-							HStack {
-								Text("21")
-									.padding(.bottom, -1)
-									.font(.custom(Fonts.mediumLight, size: 40))
-								Image(systemName: "degreesign.celsius")
-									.font(.largeTitle.weight(.thin))
-							}
-							Rectangle()
-								.frame(width: geo.size.width / 4, height: 1)
+							Text("Pittsburgh")
+								.font(.custom(Fonts.mediumLight, size: 35))
+							Text("Sat, 1:40pm")
+								.font(.custom(Fonts.mediumLight, size: 20))
 							
-							HStack {
-								Text("15")
-									.padding(.top, -1)
+						}
+						
+						
+						Spacer()
+						
+						Image(systemName: "plus")
+							.font(.title.weight(.thin))
+					}
+					.padding(.horizontal)
+					.padding(.top, 65)
+					
+//					Spacer()
+					
+					// MARK: Main View
+					ScrollView {
+						VStack {
+							HStack(alignment: .bottom) {
+								// cloudy and temp
+								VStack {
+									HStack {
+										Image(systemName: "cloud")
+											.font(.largeTitle.weight(.thin))
+										
+										Text("Cloudy")
+										
+									}
 									.font(.custom(Fonts.mediumLight, size: 40))
-								Image(systemName: "degreesign.celsius")
-									.font(.largeTitle.weight(.thin))
+									
+									HStack(alignment: .top) {
+										Text("15")
+											.font(.custom(Fonts.mediumLight, size: 120))
+										
+										Image(systemName: "circle")
+											.padding(.top, 10)
+											.font(.system(size: 20))
+											.font(.largeTitle.weight(.thin))
+									}
+									.padding(.top, -5)
+									.font(.custom(Fonts.mediumLight, size: 40))
+								}
+								.padding()
+								.font(.largeTitle)
+								
+								// low and high
+								VStack {
+									HStack {
+										Text("21")
+											.padding(.bottom, -1)
+											.font(.custom(Fonts.mediumLight, size: 40))
+										Image(systemName: "degreesign.celsius")
+											.font(.largeTitle.weight(.thin))
+									}
+									Rectangle()
+										.frame(width: geo.size.width / 4, height: 1)
+									
+									HStack {
+										Text("15")
+											.padding(.top, -1)
+											.font(.custom(Fonts.mediumLight, size: 40))
+										Image(systemName: "degreesign.celsius")
+											.font(.largeTitle.weight(.thin))
+									}
+								}
+								.padding()
+								.padding(.bottom, 10)
+								.font(.largeTitle)
 							}
 						}
-						.padding()
-						.padding(.bottom, 10)
-						.font(.largeTitle)
 					}
 				}
 				.foregroundColor(.white)
+
 			}
 			.ignoresSafeArea()
 		}
