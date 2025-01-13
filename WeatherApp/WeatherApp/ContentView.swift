@@ -19,26 +19,36 @@ struct ContentView: View {
 						VStack {
 							HStack {
 								Image(systemName: "cloud")
+									.font(.largeTitle.weight(.thin))
+								
 								Text("Cloudy")
+									
 							}
+							.font(.custom(Fonts.mediumLight, size: 40))
+							
 							HStack(alignment: .top) {
 								Text("15")
-									.font(.system(size: 96))
+									.font(.custom(Fonts.mediumLight, size: 120))
+								
 								Image(systemName: "circle")
 									.padding(.top, 10)
 									.font(.system(size: 20))
+									.font(.largeTitle.weight(.thin))
 							}
 							.padding(.top, -5)
+							.font(.custom(Fonts.mediumLight, size: 40))
 						}
 						.padding()
 						.font(.largeTitle)
+						
 						// low and high
 						VStack {
 							HStack {
 								Text("21")
 									.padding(.bottom, -1)
+									.font(.custom(Fonts.mediumLight, size: 40))
 								Image(systemName: "degreesign.celsius")
-									.font(.title)
+									.font(.largeTitle.weight(.thin))
 							}
 							Rectangle()
 								.frame(width: geo.size.width / 4, height: 1)
@@ -46,8 +56,9 @@ struct ContentView: View {
 							HStack {
 								Text("15")
 									.padding(.top, -1)
+									.font(.custom(Fonts.mediumLight, size: 40))
 								Image(systemName: "degreesign.celsius")
-									.font(.title)
+									.font(.largeTitle.weight(.thin))
 							}
 						}
 						.padding()
