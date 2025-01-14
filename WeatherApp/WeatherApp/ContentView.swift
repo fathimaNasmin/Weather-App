@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+	@State private var searchIsPresented = false
+	
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
@@ -32,14 +34,24 @@ struct ContentView: View {
 						
 						Spacer()
 						
-						Image(systemName: "plus")
-							.font(.title.weight(.thin))
+						Button {
+							print("button clicked")
+							searchIsPresented = true
+						} label: {
+							Image(systemName: "plus")
+								.font(.title.weight(.thin))
+						}
+						.fullScreenCover(isPresented: $searchIsPresented) {
+							SearchView()
+						}
+
+						
+						
 					}
 					.padding(.horizontal)
 					.padding(.top, 65)
 					.padding(.bottom, 50)
 					
-//					Spacer()
 					
 					// MARK: Main View
 					ScrollView {
