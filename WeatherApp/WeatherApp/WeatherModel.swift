@@ -15,12 +15,19 @@ struct WeatherModel: Decodable {
 	
 	struct Location: Decodable {
 		let name: String
-		let currentTimeEpoch: Date
+		let currentDateEpoch: Date
 		
 		
 		enum CodingKeys: String, CodingKey {
 			case name
-			case currentTimeEpoch = "localtime_epoch"
+			case currentDateEpoch = "localtime_epoch"
+		}
+		
+		var now: String {
+			let formatter = DateFormatter()
+			formatter.dateFormat = "E, h:mm a"
+
+			return formatter.string(from: currentDateEpoch)
 		}
 	}
 	
@@ -76,6 +83,12 @@ struct WeatherModel: Decodable {
 			let day: SingleDay
 			let hourly: [HourForecast]
 			
+			var formattedDateEpoch: String {
+				let formatter = DateFormatter()
+				formatter.dateFormat = "E"
+				
+				return formatter.string(from: dateEpoch)
+			}
 			
 			enum CodingKeys: String, CodingKey {
 				case date
