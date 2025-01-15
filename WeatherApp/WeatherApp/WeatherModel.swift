@@ -89,7 +89,7 @@ struct WeatherModel: Decodable {
 				let maxTempF: Double
 				let minTempC: Double
 				let minTempF: Double
-//				let condition: TodayCondition
+				let condition: TodayCondition
 				
 				var formattedMaxTempC: String { maxTempC.rounded(to: 0) }
 				
@@ -104,6 +104,15 @@ struct WeatherModel: Decodable {
 					case maxTempF = "maxtemp_f"
 					case minTempC = "mintemp_c"
 					case minTempF = "mintemp_f"
+					case condition
+				}
+				
+				struct TodayCondition: Decodable, Hashable, Equatable {
+					let text: String
+					
+					enum CodingKeys: String, CodingKey {
+						case text
+					}
 				}
 				
 			}
