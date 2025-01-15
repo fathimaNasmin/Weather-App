@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+	@StateObject private var vm = WeatherViewModel()
 	@State private var searchIsPresented = false
 	
     var body: some View {
@@ -24,7 +25,7 @@ struct ContentView: View {
 						Spacer()
 						
 						VStack {
-							Text("Pittsburgh")
+							Text(vm.forecast.location.name)
 								.font(.custom(Fonts.mediumLight, size: 35))
 							Text("Sat, 1:40pm")
 								.font(.custom(Fonts.mediumLight, size: 20))
@@ -48,7 +49,7 @@ struct ContentView: View {
 						
 						
 					}
-					.padding(.horizontal)
+					.padding(.horizontal, 25)
 					.padding(.top, 65)
 					.padding(.bottom, 50)
 					
@@ -63,30 +64,30 @@ struct ContentView: View {
 										Image(systemName: "cloud")
 											.font(.largeTitle.weight(.thin))
 										
-										Text("Cloudy")
+										Text(vm.forecast.current.condition.text)
+											.font(.custom(Fonts.mediumLight, size: 35))
 										
 									}
-									.font(.custom(Fonts.mediumLight, size: 40))
 									
 									HStack(alignment: .top) {
-										Text("15")
-											.font(.custom(Fonts.mediumLight, size: 120))
-										
-										Image(systemName: "circle")
-											.padding(.top, 10)
-											.font(.system(size: 20, weight: .medium))
+										Text("\(vm.forecast.current.formatTempC)°")
+											.font(.custom(Fonts.mediumLight, size: 100))
 									}
 									.padding(.top, -5)
 									.font(.custom(Fonts.mediumLight, size: 40))
 								}
 								.padding()
 								.font(.largeTitle)
+								.frame(width: geo.size.width / 1.66)
+								
+//								Spacer()
 								
 								// low and high
 								VStack {
 									HStack {
-										Text("21")
+										Text(vm.forecast.forecast.forecastDay[0].day.formattedMaxTempC)
 											.font(.custom(Fonts.mediumLight, size: 30))
+											.padding(.bottom, -1)
 										Image(systemName: "degreesign.celsius")
 											.font(.title.weight(.thin))
 									}
@@ -96,14 +97,16 @@ struct ContentView: View {
 										
 									
 									HStack {
-										Text("15")
+										Text(vm.forecast.forecast.forecastDay[0].day.formattedMinTempC)
 											.font(.custom(Fonts.mediumLight, size: 30))
+											.padding(.top, -1)
+										
 										Image(systemName: "degreesign.celsius")
 											.font(.title.weight(.thin))
 									}
 								}
-								.padding()
-								.padding(.bottom, 10)
+//								.padding()
+								.padding(.bottom, 20)
 								.font(.largeTitle)
 							}
 							
@@ -123,14 +126,14 @@ struct ContentView: View {
 							// Grid
 							Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 								GridRow {
-									cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "26°")
-									cell(geometry: geo, image: "wind", text: "wind", value: "2 km/h")
-									cell(geometry: geo, image: "humidity", text: "humidity", value: "25%")
+									cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(vm.forecast.current.feelslikeC)°")
+									cell(geometry: geo, image: "wind", text: "wind", value: "\(vm.forecast.current.windKph) km/h")
+									cell(geometry: geo, image: "humidity", text: "humidity", value: "\(vm.forecast.current.humidity)%")
 								}
 								GridRow {
-									cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "30.25 in")
-									cell(geometry: geo, image: "eye", text: "visibility", value: "N/A")
-									cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "12°")
+									cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "\(vm.forecast.current.pressureIn) in")
+									cell(geometry: geo, image: "eye", text: "visibility", value: "\(vm.forecast.current.visibility)")
+									cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "\(vm.forecast.current.dewpointC)°")
 								}
 							}
 							
@@ -162,13 +165,11 @@ struct ContentView: View {
 							// Grid
 							Grid {
 								GridRow {
-									renderDayForcast(day: "Fri", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Sat", rainPercent: nil, image: "sun.rain.fill", high: "32°", low: "20°")
-									renderDayForcast(day: "Sun", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Mon", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Tue", rainPercent: nil, image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Wed", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Thu", rainPercent: nil, image: "sun.horizon", high: "36°", low: "25°")
+									ForEach(vm.forecast.forecast.forecastDay, id:\.date) { data in
+										renderDayForcast(day: "Fri", rainPercent: "30%", image: "cloud.rain", high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+									}
+									
+
 								}
 							}
 
