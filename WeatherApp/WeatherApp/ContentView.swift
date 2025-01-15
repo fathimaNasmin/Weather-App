@@ -27,7 +27,8 @@ struct ContentView: View {
 						VStack {
 							Text(vm.forecast.location.name)
 								.font(.custom(Fonts.mediumLight, size: 35))
-							Text("Sat, 1:40pm")
+							
+							Text(vm.forecast.location.now)
 								.font(.custom(Fonts.mediumLight, size: 20))
 							
 						}
@@ -180,7 +181,7 @@ struct ContentView: View {
 							Grid {
 								GridRow {
 									ForEach(vm.forecast.forecast.forecastDay, id:\.date) { data in
-										renderDayForcast(day: "Fri", rainPercent: "30%", image: "cloud.rain", high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+										renderDayForcast(day: data.formattedDateEpoch, rainPercent: "30%", image: "cloud.rain", high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
 									}
 									
 
@@ -258,6 +259,7 @@ struct ContentView: View {
 			
 			Text(low)
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+				.opacity(0.7)
 				.padding(.bottom, 6)
 				.frame(height: 20)
 		}
