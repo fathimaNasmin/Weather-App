@@ -59,13 +59,29 @@ struct ContentView: View {
 						VStack {
 							HStack(alignment: .bottom) {
 								// cloudy and temp
+								
 								VStack {
 									HStack {
-										Image(systemName: "cloud")
-											.font(.largeTitle.weight(.thin))
+//										Moderate or heavy showers of ice pellets
+										if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+											Image(systemName: weatherCondition.sfSymbol)
+												.font(.largeTitle.weight(.thin))
+												.imageScale(.large)
+												.padding(.horizontal, 20)
+											
+											
+										} else {
+											Image(systemName: "questionmark")
+												.font(.largeTitle.weight(.thin))
+										}
+										
 										
 										Text(vm.forecast.current.condition.text)
-											.font(.custom(Fonts.mediumLight, size: 35))
+											.font(.custom(Fonts.mediumLight,
+														  size:vm.forecast.current.condition.text.count < 20 ? 35 : 28)
+											)
+											.fixedSize(horizontal: false, vertical: true)
+											.multilineTextAlignment(.center)
 										
 									}
 									
@@ -80,7 +96,6 @@ struct ContentView: View {
 								.font(.largeTitle)
 								.frame(width: geo.size.width / 1.66)
 								
-//								Spacer()
 								
 								// low and high
 								VStack {
@@ -105,7 +120,6 @@ struct ContentView: View {
 											.font(.title.weight(.thin))
 									}
 								}
-//								.padding()
 								.padding(.bottom, 20)
 								.font(.largeTitle)
 							}
@@ -180,8 +194,9 @@ struct ContentView: View {
 					.scrollIndicators(.hidden)
 				}
 				.foregroundColor(.white)
-
+				.padding(.bottom, 40)
 			}
+
 			.ignoresSafeArea()
 		}
 
@@ -193,11 +208,11 @@ struct ContentView: View {
 				.font(.title2)
 				.padding(.bottom, 5)
 			Text(text.capitalized)
-				.font(.custom(Fonts.RobotoCondensedRegular, size: 18))
+				.font(.custom(Fonts.RobotoCondensedRegular, size: 16))
 				.foregroundColor(.white.opacity(0.5))
 				.padding(.bottom, -5)
 			Text(value)
-					.font(.custom(Fonts.RobotoCondensedRegular, size: 20))
+					.font(.custom(Fonts.RobotoCondensedRegular, size: 18))
 		}
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.padding()
@@ -220,11 +235,17 @@ struct ContentView: View {
 				.opacity(rainPercent == nil ? 0 : 1)
 				.frame(height: 20)
 
-			
-			Image(systemName: image)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 22))
-				.padding(.bottom, 8)
-				.frame(height: 25)
+			if let weatherCondition = WeatherCondition(rawValue: vm.forecast.forecast.forecastDay[0].day.condition.text) {
+				
+				Image(systemName: weatherCondition.sfSymbol)
+					.font(.custom(Fonts.RobotoCondensedSemiBold, size: 22))
+					.padding(.bottom, 8)
+					.frame(height: 25)
+			} else {
+				Image(systemName: "questionmark")
+					.font(.largeTitle)
+					.foregroundColor(.gray)
+			}
 			
 			Text(high)
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
@@ -233,7 +254,7 @@ struct ContentView: View {
 			
 			Rectangle()
 				.fill(.white.opacity(0.5))
-				.frame(height: 1)
+				.frame(width: 30, height: 1)
 			
 			Text(low)
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
