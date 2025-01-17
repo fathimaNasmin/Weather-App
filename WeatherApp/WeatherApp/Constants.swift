@@ -9,7 +9,11 @@ import Foundation
 import SwiftUI
 
 enum Gradients {
-	static let cloudy = LinearGradient(gradient: Gradient(colors: [.blue, .gray]), startPoint: .topLeading, endPoint: .bottomTrailing)
+	static let cloudy = LinearGradient(
+		gradient: Gradient(
+			colors: [Color(hex: "#EFB6C8"), Color(hex: "#A888B5"), Color(hex: "#8174A0")]),
+		startPoint: .top,
+		endPoint: .bottom)
 }
 
 enum Fonts {
@@ -114,6 +118,77 @@ enum WeatherCondition: String {
 			return "snowflake"
 		case .patchyLightSnowWithThunder, .moderateOrHeavySnowWithThunder:
 			return "cloud.hail"
+		}
+	}
+	
+	var backgroundGradient: LinearGradient {
+		switch self {
+		case .sunny:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.yellow, Color.blue]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .clear:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.blue, Color.white]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .cloudy, .partlyCloudy:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color(hex: "#548FAB"), Color(hex: "#C0C6CB")]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .overcast:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.gray, Color.gray, Color.white]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .fog, .freezingFog, .mist:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color(hex: "#EFB6C8"), Color(hex: "#A888B5"), Color(hex: "#8174A0")]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .patchyRainPossible, .heavyRain, .lightRain, .patchyLightRain, .moderateRain, .moderateRainTimes, .heavyRainTimes, .lightRainShower, .moderateOrHeavyFreezingRain, .moderateOrHeavyRainShower:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color(hex: "#515F7A"), Color(hex: "#8290AC"), Color(hex: "#BCC7CC"), Color(hex: "#D5D9E0"), Color(hex: "#8C96A1")]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .torrentialRainShower:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.black, Color.white, Color.orange]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .patchyLightRainWithThunder, .moderateOrHeavyRainWithThunder, .thunderyOutbreaksPossible:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.black, Color.white]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .lightSnow, .heavySnow, .blowingSnow, .moderateSnow, .patchyHeavySnow, .patchyLightSnow, .patchySnowPossible, .moderateOrHeavySnowShowers, .lightSleet, .patchySleetPossible, .moderateOrHeavySleet, .moderateOrHeavySleetShower, .blizzard, .patchyLightSnowWithThunder, .moderateOrHeavySnowWithThunder:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color(hex: "#A9A9A9"), .gray, Color(hex: "#D3D3D3")]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .drizzle, .freezingDrizzle, .heavyFreezingDrizzle, .patchyLightdrizzle:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color.white, Color.gray]),
+				startPoint: .top,
+				endPoint: .bottom)
+		case .icePellets, .lightShowersOfIcePellets, .moderateHeavyShowersIcePellets:
+			return LinearGradient(
+				gradient: Gradient(
+					colors: [Color(hex: "#32407B"), Color.white, Color.gray]),
+				startPoint: .top,
+				endPoint: .bottom)
 		}
 	}
 }
