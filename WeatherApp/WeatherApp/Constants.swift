@@ -8,14 +8,6 @@
 import Foundation
 import SwiftUI
 
-enum Gradients {
-	static let cloudy = LinearGradient(
-		gradient: Gradient(
-			colors: [Color(hex: "#EFB6C8"), Color(hex: "#A888B5"), Color(hex: "#8174A0")]),
-		startPoint: .top,
-		endPoint: .bottom)
-}
-
 enum Fonts {
 	static let mediumLight = "Roboto-ExtraLight"
 	static let semiCondensedExtraLight = "Roboto_SemiCondensed-ExtraLight"
