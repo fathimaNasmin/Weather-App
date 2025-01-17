@@ -10,11 +10,15 @@ import SwiftUI
 struct ContentView: View {
 	@StateObject private var vm = WeatherViewModel()
 	@State private var searchIsPresented = false
-	
+	//
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
-				Gradients.cloudy
+				if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+					weatherCondition.backgroundGradient
+				} else {
+					Color.gray.opacity(0.4)
+				}
 				
 				VStack {
 					// MARK: Top Bar
@@ -63,7 +67,6 @@ struct ContentView: View {
 								
 								VStack {
 									HStack {
-//										Moderate or heavy showers of ice pellets
 										if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
 											Image(systemName: weatherCondition.sfSymbol)
 												.font(.largeTitle.weight(.thin))
@@ -125,7 +128,7 @@ struct ContentView: View {
 								.font(.largeTitle)
 							}
 							
-							// TODO: Swift Charts
+							// MARK: Swift Charts
 							HourlyWeatherChartView()
 							
 							// MARK: Details
