@@ -165,6 +165,8 @@ struct ContentView: View {
 							}
 							.padding()
 							
+							HourlyWeatherChartView()
+							
 							// TODO: swift charts
 							
 							
@@ -225,13 +227,12 @@ struct ContentView: View {
 	private func renderDayForcast(day: String, rainPercent: String?, image:String, high: String, low: String) -> some View {
 		VStack(spacing: 5) {
 			Text(day)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 20))
-				.padding(.bottom, 4)
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
 				.frame(height: 25)
 
 
 			Text(rainPercent ?? " ")
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 16))
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 12))
 				.foregroundColor(.white.opacity(0.6))
 				.padding(.bottom, 0)
 				.opacity(rainPercent == nil ? 0 : 1)
@@ -240,8 +241,8 @@ struct ContentView: View {
 			if let weatherCondition = WeatherCondition(rawValue: vm.forecast.forecast.forecastDay[0].day.condition.text) {
 				
 				Image(systemName: weatherCondition.sfSymbol)
-					.font(.custom(Fonts.RobotoCondensedSemiBold, size: 22))
-					.padding(.bottom, 8)
+					.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+					.padding(.bottom, 6)
 					.frame(height: 25)
 			} else {
 				Image(systemName: "questionmark")
@@ -250,7 +251,7 @@ struct ContentView: View {
 			}
 			
 			Text(high)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 16))
 				.padding(.bottom, -2)
 				.frame(height: 20)
 			
@@ -259,7 +260,7 @@ struct ContentView: View {
 				.frame(width: 30, height: 1)
 			
 			Text(low)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
 				.opacity(0.7)
 				.padding(.bottom, 6)
 				.frame(height: 20)
