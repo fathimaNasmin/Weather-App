@@ -126,6 +126,7 @@ struct ContentView: View {
 							}
 							
 							// TODO: Swift Charts
+							HourlyWeatherChartView()
 							
 							// MARK: Details
 							HStack{
