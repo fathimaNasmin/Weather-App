@@ -82,7 +82,6 @@ struct HourlyWeatherChartView: View {
 					.chartScrollableAxes(.horizontal)
 					.foregroundStyle(.white.opacity(0.8))
 					.padding()
-//					.padding(.horizontal, 20)
 				}
 			}
 	}

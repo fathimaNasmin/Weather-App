@@ -70,7 +70,7 @@ struct ContentView: View {
 											Image(systemName: weatherCondition.sfSymbol)
 												.font(.largeTitle.weight(.thin))
 												.imageScale(.large)
-												.padding(.horizontal, 20)
+//												.padding(.horizontal, 20)
 											
 											
 										} else {
@@ -81,10 +81,11 @@ struct ContentView: View {
 										
 										Text(vm.forecast.current.condition.text)
 											.font(.custom(Fonts.mediumLight,
-														  size:vm.forecast.current.condition.text.count < 20 ? 35 : 28)
+														  size:vm.forecast.current.condition.text.count < 10 ? 35 : 28)
 											)
 											.fixedSize(horizontal: false, vertical: true)
 											.multilineTextAlignment(.center)
+											.minimumScaleFactor(0.5)
 										
 									}
 									
@@ -168,9 +169,9 @@ struct ContentView: View {
 							}
 							.padding()
 							
-//							HourlyWeatherChartView()
-							
 							// TODO: swift charts
+							ChanceOfRainChartView(hourlyRainData: vm.forecast.forecast.forecastDay[0].hourly)
+							
 							
 							
 							// MARK: NEXT 7 DAYS
@@ -187,7 +188,7 @@ struct ContentView: View {
 							Grid {
 								GridRow {
 									ForEach(vm.forecast.forecast.forecastDay, id:\.date) { data in
-										renderDayForcast(day: data.formattedDateEpoch, rainPercent: "30%", image: "cloud.rain", high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+										renderDayForcast(day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
 									}
 									
 
@@ -227,21 +228,21 @@ struct ContentView: View {
 		.cornerRadius(8)
 	}
 	
-	private func renderDayForcast(day: String, rainPercent: String?, image:String, high: String, low: String) -> some View {
+	private func renderDayForcast(day: String, rainPercent: Int, image:String, high: String, low: String) -> some View {
 		VStack(spacing: 5) {
 			Text(day)
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
 				.frame(height: 25)
 
 
-			Text(rainPercent ?? " ")
+			Text(rainPercent > 0 ? "\(rainPercent)%" : "")
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 12))
 				.foregroundColor(.white.opacity(0.6))
 				.padding(.bottom, 0)
-				.opacity(rainPercent == nil ? 0 : 1)
+				.opacity(rainPercent > 0 ? 1 : 0)
 				.frame(height: 20)
 
-			if let weatherCondition = WeatherCondition(rawValue: vm.forecast.forecast.forecastDay[0].day.condition.text) {
+			if let weatherCondition = WeatherCondition(rawValue:image) {
 				
 				Image(systemName: weatherCondition.sfSymbol)
 					.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
@@ -250,7 +251,9 @@ struct ContentView: View {
 			} else {
 				Image(systemName: "questionmark")
 					.font(.largeTitle)
-					.foregroundColor(.gray)
+					.foregroundColor(.clear)
+					.padding(.bottom, 6)
+					.frame(height: 25)
 			}
 			
 			Text(high)
