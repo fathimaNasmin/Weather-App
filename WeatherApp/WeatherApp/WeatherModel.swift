@@ -47,6 +47,7 @@ struct WeatherModel: Decodable {
 		
 		struct Condition: Decodable {
 			let text: String
+			
 		}
 		
 		// CodingKeys to handle JSON key that differ from property names
@@ -103,8 +104,11 @@ struct WeatherModel: Decodable {
 				let minTempC: Double
 				let minTempF: Double
 				let condition: TodayCondition
+				let dailyChanceOfRain: Int
 				
-				var formattedMaxTempC: String { maxTempC.rounded(to: 0) }
+				var formattedMaxTempC: String {
+					maxTempC.rounded(to: 0)
+				}
 				
 				var formattedMaxTempF: String { maxTempF.rounded(to: 0) }
 				
@@ -118,10 +122,15 @@ struct WeatherModel: Decodable {
 					case minTempC = "mintemp_c"
 					case minTempF = "mintemp_f"
 					case condition
+					case dailyChanceOfRain = "daily_chance_of_rain"
 				}
 				
 				struct TodayCondition: Decodable, Hashable, Equatable {
 					let text: String
+					
+					var trimmedText: String {
+						return text.trimmingCharacters(in: .whitespacesAndNewlines)
+					}
 					
 					enum CodingKeys: String, CodingKey {
 						case text
