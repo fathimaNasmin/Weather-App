@@ -136,7 +136,7 @@ enum WeatherCondition: String {
 		case .overcast:
 			return LinearGradient(
 				gradient: Gradient(
-					colors: [Color.gray, Color.gray, Color.white]),
+					colors: [Color(hex: "#6d7472"), Color(hex: "#6f7674")]),
 				startPoint: .top,
 				endPoint: .bottom)
 		case .fog, .freezingFog, .mist:
