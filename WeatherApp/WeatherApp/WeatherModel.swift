@@ -129,26 +129,37 @@ struct WeatherModel: Decodable {
 				}
 				
 			}
-			
-			struct HourForecast: Decodable, Hashable, Equatable {
-				let timeEpoch: Int
-				let tempC: Double
-				let tempF: Double
-				
-				var formattedTempC: String { tempC.rounded(to: 0)}
-				
-				var formattedTempF: String { tempF.rounded(to: 0) }
-				
-				enum CodingKeys: String, CodingKey {
-					case timeEpoch = "time_epoch"
-					case tempC = "temp_c"
-					case tempF = "temp_f"
-				}
-			}
-			
-
 		}
 	}
 }
 
+struct HourForecast: Decodable, Hashable, Equatable {
+	let timeEpoch: Int
+	let time: String
+	let tempC: Double
+	let tempF: Double
+	let chanceOfRain: Int
+	
+	var formattedTempC: String { tempC.rounded(to: 0)}
+	
+	var formattedTempF: String { tempF.rounded(to: 0) }
+	
+	
+	var date: Date {
+		Date(timeIntervalSince1970: TimeInterval(timeEpoch))
+	}
+	
+	var hour: Int {
+		let calender = Calendar.current
+		return calender.component(.hour, from: date)
+	}
+	
+	enum CodingKeys: String, CodingKey {
+		case timeEpoch = "time_epoch"
+		case time
+		case tempC = "temp_c"
+		case tempF = "temp_f"
+		case chanceOfRain = "chance_of_rain"
+	}
+}
 
