@@ -8,90 +8,87 @@
 import SwiftUI
 import Charts
 
-
-struct HourlyData: Identifiable {
-	let temp: Double
-	let time: Int
-	var id: Int {
-		time
-	}
+func hourInString(date: Date) -> String {
+	let dateFormatter = DateFormatter()
+	dateFormatter.dateFormat = "h a"
+	
+	return dateFormatter.string(from: date)
 }
 
+
 struct HourlyWeatherChartView: View {
+	let hourlyData: [HourForecast]
 	
-	let sampleData: [HourlyData] = [
-		HourlyData(temp: 16.0, time: 5),
-		HourlyData(temp: 18.0, time: 6),
-		HourlyData(temp: 22.0, time: 7),
-		HourlyData(temp: 23.0, time: 8),
-		HourlyData(temp: 20.0, time: 9),
-		HourlyData(temp: 19.0, time: 10),
-		HourlyData(temp: 18.0, time: 11),
-		HourlyData(temp: 34.0, time: 12),
-		HourlyData(temp: 32.0, time: 13),
-		HourlyData(temp: 20.0, time: 14)
-	]
-	
+	var minTempC: Double? {
+		hourlyData.min(by: { $0.tempC < $1.tempC })?.tempC
+	}
+
 	var body: some View {
 			VStack {
-				Chart {
-					ForEach(sampleData, id: \.time) { temperature in
-						LineMark(
-							x: .value("Time", temperature.time),
-							y: .value("Temperature", temperature.temp)
-						)
-						.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
-						.foregroundStyle(Color.white.opacity(0.2))
-						.interpolationMethod(.cardinal)
-
-						// RuleMark: To show grid line to temperature
-						RuleMark(x: .value("time", temperature.time) ,
-								 yStart: .value("start", 0) ,
-								 yEnd: .value("end", temperature.temp)
-						)
-						.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
-						.foregroundStyle(Color.white.opacity(0.2))
-						
-						
-						// PointMark: Add Annotations for each temperature point
-						PointMark(
-							x: .value("Time", temperature.time),
-							y: .value("Temperature", temperature.temp)
-						)
-						.symbol {
-							Circle()
-								.frame(width: 4, height: 4)
-								.foregroundStyle(Color.white)
+				if hourlyData.isEmpty {
+					Text("No data available")
+				} else {
+					Chart {
+						ForEach(hourlyData, id: \.time) { temperature in
+							LineMark(
+								x: .value("Time", temperature.date),
+								y: .value("Temperature", temperature.tempC)
+							)
+							.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
+							.foregroundStyle(Color.white.opacity(0.2))
+							.interpolationMethod(.cardinal)
+							
+							// RuleMark: To show grid line to temperature
+							RuleMark(x: .value("time", temperature.date) ,
+									 yStart: .value("start", minTempC ?? 0) ,
+									 yEnd: .value("end", temperature.tempC)
+							)
+							.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
+							.foregroundStyle(Color.white.opacity(0.2))
+							
+							
+							// PointMark: Add Annotations for each temperature point
+							PointMark(
+								x: .value("Time", temperature.date),
+								y: .value("Temperature", temperature.tempC)
+							)
+							.symbol {
+								Circle()
+									.frame(width: 4, height: 4)
+									.foregroundStyle(Color.white)
+							}
+							.annotation(position: .top, alignment: .center) {
+								Text("\(temperature.tempC, specifier: "%.0f")°")
+									.font(.custom(Fonts.RobotoCondensedSemiBold, size: 14))
+									.foregroundColor(.white)
+									.padding(.bottom, 2)
+							}
+							
 						}
-						.annotation(position: .top, alignment: .center) {
-							Text("\(temperature.temp, specifier: "%.0f")°")
-								.font(.custom(Fonts.RobotoCondensedSemiBold, size: 14))
-								.foregroundColor(.white)
-								.padding(.bottom, 2)
+					}
+					.frame(height: 100)
+					.chartXScale(domain: hourlyData.first!.date...hourlyData.last!.date)
+					.chartXAxis(content: {
+						AxisMarks(values: hourlyData.map({$0.date})) { value in
+							if let date = value.as(Date.self){
+								AxisValueLabel(centered: true) {
+									Text(hourInString(date: date))
+										.foregroundStyle(.white)
+								}
+							}
 						}
-						
-					}
+					})
+					.chartYAxis(.hidden)
+					.chartScrollableAxes(.horizontal)
+					.foregroundStyle(.white.opacity(0.8))
+					.padding()
+//					.padding(.horizontal, 20)
 				}
-				.chartScrollableAxes(.horizontal)
-				.chartXVisibleDomain(length: 8)
-				.chartXScale(domain: sampleData.first!.time...sampleData.last!.time)
-				.chartXAxis {
-					AxisMarks(values: .automatic(desiredCount: sampleData.count)){
-						AxisValueLabel()
-							.foregroundStyle(Color.white)
-					}
-				}
-				.chartYAxis(.hidden)
-				.frame(height: 100)
-				.foregroundStyle(.white.opacity(0.8))
-				.padding()
-				.padding(.leading, 15)
-				
 			}
 	}
 	
 }
 
-#Preview {
-    HourlyWeatherChartView()
-}
+//#Preview {
+//    HourlyWeatherChartView()
+//}

@@ -34,7 +34,6 @@ struct ContentView: View {
 							
 							Text(vm.forecast.location.now)
 								.font(.custom(Fonts.mediumLight, size: 20))
-							
 						}
 						
 						
@@ -129,7 +128,8 @@ struct ContentView: View {
 							}
 							
 							// MARK: Swift Charts
-							HourlyWeatherChartView()
+							
+							HourlyWeatherChartView(hourlyData: vm.forecast.forecast.forecastDay[0].hourly)
 							
 							// MARK: Details
 							HStack{
@@ -168,7 +168,7 @@ struct ContentView: View {
 							}
 							.padding()
 							
-							HourlyWeatherChartView()
+//							HourlyWeatherChartView()
 							
 							// TODO: swift charts
 							
