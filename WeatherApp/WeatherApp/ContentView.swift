@@ -54,6 +54,7 @@ struct ContentView: View {
 						
 					}
 					.padding(.horizontal, 25)
+					.frame(width: geo.size.width)
 					.padding(.top, 65)
 					.padding(.bottom, 50)
 					
@@ -96,9 +97,9 @@ struct ContentView: View {
 									.padding(.top, -5)
 									.font(.custom(Fonts.mediumLight, size: 40))
 								}
+								.frame(width: geo.size.width / 2)
 								.padding()
 								.font(.largeTitle)
-								.frame(width: geo.size.width / 1.66)
 								
 								
 								// low and high
@@ -124,13 +125,17 @@ struct ContentView: View {
 											.font(.title.weight(.thin))
 									}
 								}
+								.padding(.trailing, 20)
 								.padding(.bottom, 20)
 								.font(.largeTitle)
 							}
+							.frame(width: geo.size.width)
 							
 							// MARK: Swift Charts
 							
 							HourlyWeatherChartView(hourlyData: vm.forecast.forecast.forecastDay[0].hourly)
+								.frame(width: geo.size.width)
+								.padding(.horizontal, 12)
 							
 							// MARK: Details
 							HStack{
@@ -175,33 +180,44 @@ struct ContentView: View {
 							
 							
 							// MARK: NEXT 7 DAYS
-							HStack{
-								Text("next 7 days".uppercased())
-									.font(.custom(Fonts.semiCondensedExtraLight, size: 18))
-									.padding(.trailing, 7)
-								Rectangle()
-									.fill(.white.opacity(0.5))
-									.frame(height: 1)
-							}
-							.padding()
-							// Grid
-							Grid {
-								GridRow {
-									ForEach(vm.forecast.forecast.forecastDay, id:\.date) { data in
-										renderDayForcast(day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
-									}
-									
-
+							VStack {
+								HStack{
+									Text("next 7 days".uppercased())
+										.font(.custom(Fonts.semiCondensedExtraLight, size: 18))
+										.padding(.trailing, 7)
+									Rectangle()
+										.fill(.white.opacity(0.5))
+										.frame(height: 1)
 								}
+								.padding()
+								// Grid
+								Grid {
+									GridRow {
+										ForEach(vm.forecast.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
+											renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+										}
+										
+										
+									}
+								}
+								.frame(width: geo.size.width)
 							}
+							.frame(width: geo.size.width)
+							.padding()
+							.padding(.horizontal, 30)
 
 
 						}
+						.frame(width: geo.size.width - 20)
+						.padding(.horizontal, 20)
 					}
+					.frame(width: geo.size.width)
 					.padding(.horizontal, 15)
 					.scrollIndicators(.hidden)
 				}
 				.foregroundColor(.white)
+				.frame(maxWidth: geo.size.width - 10)
+				.padding(.horizontal, 10)
 				.padding(.bottom, 40)
 			}
 
@@ -228,7 +244,7 @@ struct ContentView: View {
 		.cornerRadius(8)
 	}
 	
-	private func renderDayForcast(day: String, rainPercent: Int, image:String, high: String, low: String) -> some View {
+	private func renderDayForcast(geometry: GeometryProxy, day: String, rainPercent: Int, image:String, high: String, low: String) -> some View {
 		VStack(spacing: 5) {
 			Text(day)
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
@@ -271,7 +287,8 @@ struct ContentView: View {
 				.padding(.bottom, 6)
 				.frame(height: 20)
 		}
-		.frame(width: 45)
+		.frame(width: geometry.size.width / 7)
+		.padding(.horizontal, -5)
 	}
 }
 

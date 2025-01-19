@@ -70,7 +70,7 @@ struct ChanceOfRainChartView: View {
 						}
 					}
 				})
-//				.chartYAxis(.hidden)
+				.chartYAxis(.hidden)
 				.chartScrollableAxes(.horizontal)
 				.foregroundStyle(.white.opacity(0.8))
 				.padding()
