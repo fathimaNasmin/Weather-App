@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+	@StateObject private var vm = WeatherViewModel()
 	@State private var searchIsPresented = false
-	
+	//
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
-				Gradients.cloudy
+				if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+					weatherCondition.backgroundGradient
+				} else {
+					Color.gray.opacity(0.4)
+				}
 				
 				VStack {
 					// MARK: Top Bar
@@ -24,11 +29,11 @@ struct ContentView: View {
 						Spacer()
 						
 						VStack {
-							Text("Pittsburgh")
+							Text(vm.forecast.location.name)
 								.font(.custom(Fonts.mediumLight, size: 35))
-							Text("Sat, 1:40pm")
-								.font(.custom(Fonts.mediumLight, size: 20))
 							
+							Text(vm.forecast.location.now)
+								.font(.custom(Fonts.mediumLight, size: 20))
 						}
 						
 						
@@ -48,7 +53,8 @@ struct ContentView: View {
 						
 						
 					}
-					.padding(.horizontal)
+					.padding(.horizontal, 25)
+					.frame(width: geo.size.width)
 					.padding(.top, 65)
 					.padding(.bottom, 50)
 					
@@ -58,35 +64,50 @@ struct ContentView: View {
 						VStack {
 							HStack(alignment: .bottom) {
 								// cloudy and temp
+								
 								VStack {
 									HStack {
-										Image(systemName: "cloud")
-											.font(.largeTitle.weight(.thin))
+										if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+											Image(systemName: weatherCondition.sfSymbol)
+												.font(.largeTitle.weight(.thin))
+												.imageScale(.large)
+//												.padding(.horizontal, 20)
+											
+											
+										} else {
+											Image(systemName: "questionmark")
+												.font(.largeTitle.weight(.thin))
+										}
 										
-										Text("Cloudy")
+										
+										Text(vm.forecast.current.condition.text)
+											.font(.custom(Fonts.mediumLight,
+														  size:vm.forecast.current.condition.text.count < 10 ? 35 : 28)
+											)
+											.fixedSize(horizontal: false, vertical: true)
+											.multilineTextAlignment(.center)
+											.minimumScaleFactor(0.5)
 										
 									}
-									.font(.custom(Fonts.mediumLight, size: 40))
 									
 									HStack(alignment: .top) {
-										Text("15")
-											.font(.custom(Fonts.mediumLight, size: 120))
-										
-										Image(systemName: "circle")
-											.padding(.top, 10)
-											.font(.system(size: 20, weight: .medium))
+										Text("\(vm.forecast.current.formatTempC)°")
+											.font(.custom(Fonts.mediumLight, size: 100))
 									}
 									.padding(.top, -5)
 									.font(.custom(Fonts.mediumLight, size: 40))
 								}
+								.frame(width: geo.size.width / 2)
 								.padding()
 								.font(.largeTitle)
+								
 								
 								// low and high
 								VStack {
 									HStack {
-										Text("21")
+										Text(vm.forecast.forecast.forecastDay[0].day.formattedMaxTempC)
 											.font(.custom(Fonts.mediumLight, size: 30))
+											.padding(.bottom, -1)
 										Image(systemName: "degreesign.celsius")
 											.font(.title.weight(.thin))
 									}
@@ -96,18 +117,25 @@ struct ContentView: View {
 										
 									
 									HStack {
-										Text("15")
+										Text(vm.forecast.forecast.forecastDay[0].day.formattedMinTempC)
 											.font(.custom(Fonts.mediumLight, size: 30))
+											.padding(.top, -1)
+										
 										Image(systemName: "degreesign.celsius")
 											.font(.title.weight(.thin))
 									}
 								}
-								.padding()
-								.padding(.bottom, 10)
+								.padding(.trailing, 20)
+								.padding(.bottom, 20)
 								.font(.largeTitle)
 							}
+							.frame(width: geo.size.width)
 							
-							// TODO: Swift Charts
+							// MARK: Swift Charts
+							
+							HourlyWeatherChartView(hourlyData: vm.forecast.forecast.forecastDay[0].hourly)
+								.frame(width: geo.size.width)
+								.padding(.horizontal, 12)
 							
 							// MARK: Details
 							HStack{
@@ -123,14 +151,14 @@ struct ContentView: View {
 							// Grid
 							Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 								GridRow {
-									cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "26°")
-									cell(geometry: geo, image: "wind", text: "wind", value: "2 km/h")
-									cell(geometry: geo, image: "humidity", text: "humidity", value: "25%")
+									cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(vm.forecast.current.feelslikeC)°")
+									cell(geometry: geo, image: "wind", text: "wind", value: "\(vm.forecast.current.windKph) km/h")
+									cell(geometry: geo, image: "humidity", text: "humidity", value: "\(vm.forecast.current.humidity)%")
 								}
 								GridRow {
-									cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "30.25 in")
-									cell(geometry: geo, image: "eye", text: "visibility", value: "N/A")
-									cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "12°")
+									cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "\(vm.forecast.current.pressureIn) in")
+									cell(geometry: geo, image: "eye", text: "visibility", value: "\(vm.forecast.current.visibility)")
+									cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "\(vm.forecast.current.dewpointC)°")
 								}
 							}
 							
@@ -147,40 +175,52 @@ struct ContentView: View {
 							.padding()
 							
 							// TODO: swift charts
+							ChanceOfRainChartView(hourlyRainData: vm.forecast.forecast.forecastDay[0].hourly)
+							
 							
 							
 							// MARK: NEXT 7 DAYS
-							HStack{
-								Text("next 7 days".uppercased())
-									.font(.custom(Fonts.semiCondensedExtraLight, size: 18))
-									.padding(.trailing, 7)
-								Rectangle()
-									.fill(.white.opacity(0.5))
-									.frame(height: 1)
-							}
-							.padding()
-							// Grid
-							Grid {
-								GridRow {
-									renderDayForcast(day: "Fri", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Sat", rainPercent: nil, image: "sun.rain.fill", high: "32°", low: "20°")
-									renderDayForcast(day: "Sun", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Mon", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Tue", rainPercent: nil, image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Wed", rainPercent: "30%", image: "cloud.rain", high: "28°", low: "15°")
-									renderDayForcast(day: "Thu", rainPercent: nil, image: "sun.horizon", high: "36°", low: "25°")
+							VStack {
+								HStack{
+									Text("next 7 days".uppercased())
+										.font(.custom(Fonts.semiCondensedExtraLight, size: 18))
+										.padding(.trailing, 7)
+									Rectangle()
+										.fill(.white.opacity(0.5))
+										.frame(height: 1)
 								}
+								.padding()
+								// Grid
+								Grid {
+									GridRow {
+										ForEach(vm.forecast.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
+											renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+										}
+										
+										
+									}
+								}
+								.frame(width: geo.size.width)
 							}
+							.frame(width: geo.size.width)
+							.padding()
+							.padding(.horizontal, 30)
 
 
 						}
+						.frame(width: geo.size.width - 20)
+						.padding(.horizontal, 20)
 					}
+					.frame(width: geo.size.width)
 					.padding(.horizontal, 15)
 					.scrollIndicators(.hidden)
 				}
 				.foregroundColor(.white)
-
+				.frame(maxWidth: geo.size.width - 10)
+				.padding(.horizontal, 10)
+				.padding(.bottom, 40)
 			}
+
 			.ignoresSafeArea()
 		}
 
@@ -192,11 +232,11 @@ struct ContentView: View {
 				.font(.title2)
 				.padding(.bottom, 5)
 			Text(text.capitalized)
-				.font(.custom(Fonts.RobotoCondensedRegular, size: 18))
+				.font(.custom(Fonts.RobotoCondensedRegular, size: 16))
 				.foregroundColor(.white.opacity(0.5))
 				.padding(.bottom, -5)
 			Text(value)
-					.font(.custom(Fonts.RobotoCondensedRegular, size: 20))
+					.font(.custom(Fonts.RobotoCondensedRegular, size: 18))
 		}
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.padding()
@@ -204,42 +244,51 @@ struct ContentView: View {
 		.cornerRadius(8)
 	}
 	
-	private func renderDayForcast(day: String, rainPercent: String?, image:String, high: String, low: String) -> some View {
+	private func renderDayForcast(geometry: GeometryProxy, day: String, rainPercent: Int, image:String, high: String, low: String) -> some View {
 		VStack(spacing: 5) {
 			Text(day)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 20))
-				.padding(.bottom, 4)
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
 				.frame(height: 25)
 
 
-			Text(rainPercent ?? " ")
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 16))
+			Text(rainPercent > 0 ? "\(rainPercent)%" : "")
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 12))
 				.foregroundColor(.white.opacity(0.6))
 				.padding(.bottom, 0)
-				.opacity(rainPercent == nil ? 0 : 1)
+				.opacity(rainPercent > 0 ? 1 : 0)
 				.frame(height: 20)
 
-			
-			Image(systemName: image)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 22))
-				.padding(.bottom, 8)
-				.frame(height: 25)
+			if let weatherCondition = WeatherCondition(rawValue:image) {
+				
+				Image(systemName: weatherCondition.sfSymbol)
+					.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+					.padding(.bottom, 6)
+					.frame(height: 25)
+			} else {
+				Image(systemName: "questionmark")
+					.font(.largeTitle)
+					.foregroundColor(.clear)
+					.padding(.bottom, 6)
+					.frame(height: 25)
+			}
 			
 			Text(high)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 16))
 				.padding(.bottom, -2)
 				.frame(height: 20)
 			
 			Rectangle()
 				.fill(.white.opacity(0.5))
-				.frame(height: 1)
+				.frame(width: 30, height: 1)
 			
 			Text(low)
-				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 18))
+				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 15))
+				.opacity(0.7)
 				.padding(.bottom, 6)
 				.frame(height: 20)
 		}
-		.frame(width: 45)
+		.frame(width: geometry.size.width / 7)
+		.padding(.horizontal, -5)
 	}
 }
 
