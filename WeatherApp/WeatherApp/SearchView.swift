@@ -12,6 +12,9 @@ struct SearchView: View {
 	
 	@ObservedObject var vm: WeatherViewModel
 	@State private var searchTerm = ""
+	@State private var isShowingForecast = false
+	
+	var geo: GeometryProxy
 	
 	
     var body: some View {
@@ -22,6 +25,11 @@ struct SearchView: View {
 					ForEach(vm.filteredCountry) { country in
 						Button {
 							vm.searchText = country.name
+							Task {
+								await vm.fetchWeatherForecast(for: vm.searchText)
+								isShowingForecast = true
+							}
+//							vm.searchText = ""
 						} label: {
 							Text("\(country.name), \(country.region), \(country.country)")
 								.accentColor(.primary)
@@ -41,6 +49,9 @@ struct SearchView: View {
 
 			}
 			.searchable(text: $vm.searchText, prompt: "Search")
+			.sheet(isPresented: $isShowingForecast) {
+				AddForecastSheet(vm: vm, geo: geo)
+			}
 		}
 		.ignoresSafeArea()
 		.preferredColorScheme(.dark)
@@ -49,6 +60,15 @@ struct SearchView: View {
 		
 }
 
-#Preview {
-	SearchView(vm: WeatherViewModel())
+struct SearchViewPreviewWrapper: View {
+	var body: some View {
+		GeometryReader { geo in
+			SearchView(vm: WeatherViewModel(), geo: geo)
+		}
+	}
 }
+
+#Preview {
+	SearchViewPreviewWrapper()
+}
+
