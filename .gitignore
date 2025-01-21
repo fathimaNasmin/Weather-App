@@ -64,3 +64,6 @@ fastlane/test_output
 
 #ignore .DS_Store
 .DS_Store
+
+#Ignore secrets file
+WeatherApp/WeatherApp/Secrets.swift
