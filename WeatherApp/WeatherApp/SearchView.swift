@@ -41,6 +41,7 @@ struct SearchView: View {
 				
 				Button {
 					dismiss()
+					vm.searchText = ""
 				} label: {
 					Image(systemName: "xmark")
 						.font(.largeTitle)

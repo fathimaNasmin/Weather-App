@@ -19,6 +19,7 @@ struct TopBarAddView: View {
 				Button {
 					print("Dismiss the sheet")
 					dismiss()
+					vm.searchText = ""
 				} label: {
 					Text("Cancel")
 						.accentColor(.primary)
