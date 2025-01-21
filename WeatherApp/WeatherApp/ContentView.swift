@@ -47,7 +47,7 @@ struct ContentView: View {
 								.font(.title.weight(.thin))
 						}
 						.fullScreenCover(isPresented: $searchIsPresented) {
-							SearchView()
+							SearchView(vm: vm)
 						}
 
 						

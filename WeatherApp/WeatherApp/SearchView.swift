@@ -9,19 +9,28 @@ import SwiftUI
 
 struct SearchView: View {
 	@Environment(\.dismiss) var dismiss
+	
+	@ObservedObject var vm: WeatherViewModel
 	@State private var searchTerm = ""
+	
 	
     var body: some View {
 			
 		NavigationStack {
 			VStack {
 				List {
-					Text("Item 1")
-					Text("Item 2")
-					Text("Item 3")
+					ForEach(vm.filteredCountry) { country in
+						Button {
+							vm.searchText = country.name
+						} label: {
+							Text("\(country.name), \(country.region), \(country.country)")
+								.accentColor(.primary)
+						}
+					}
 				}
 				
 				Spacer()
+				
 				Button {
 					dismiss()
 				} label: {
@@ -31,7 +40,7 @@ struct SearchView: View {
 				}
 
 			}
-			.searchable(text: $searchTerm, prompt: "Search")
+			.searchable(text: $vm.searchText, prompt: "Search")
 		}
 		.ignoresSafeArea()
 		.preferredColorScheme(.dark)
@@ -41,5 +50,5 @@ struct SearchView: View {
 }
 
 #Preview {
-    SearchView()
+	SearchView(vm: WeatherViewModel())
 }
