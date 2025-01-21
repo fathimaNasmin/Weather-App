@@ -63,5 +63,13 @@ class WeatherViewModel: ObservableObject {
 		
 	}
 	
+	@MainActor
+	func fetchWeatherForecast(for city: String) async {
+		do {
+			forecast = try await fetcher.fetchWeather(for: city)
+		}catch{
+			print("Error on fetching weather for the city \(city): \(error)")
+		}
+	}
 	
 }

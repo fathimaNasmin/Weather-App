@@ -19,9 +19,7 @@ struct WeatherAppApp: App {
 
 // TODO:
 
-
-// 4. swift charts for hourly weather update
-// 5. swift charts for chance of rain
-// Rain data from api
-// change background according to the condition
 // convert to C or F
+
+// @Action: Add to the city name to the core data or swift data
+
