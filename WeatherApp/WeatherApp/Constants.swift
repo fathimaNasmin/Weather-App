@@ -124,7 +124,7 @@ enum WeatherCondition: String {
 		case .clear:
 			return LinearGradient(
 				gradient: Gradient(
-					colors: [Color.blue, Color.purple]),
+					colors: [Color.blue]),
 				startPoint: .top,
 				endPoint: .bottom)
 		case .cloudy, .partlyCloudy:

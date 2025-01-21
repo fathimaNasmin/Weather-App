@@ -9,21 +9,39 @@ import SwiftUI
 
 struct SearchView: View {
 	@Environment(\.dismiss) var dismiss
+	
+	@ObservedObject var vm: WeatherViewModel
 	@State private var searchTerm = ""
+	@State private var isShowingForecast = false
+	
+	var geo: GeometryProxy
+	
 	
     var body: some View {
 			
 		NavigationStack {
 			VStack {
 				List {
-					Text("Item 1")
-					Text("Item 2")
-					Text("Item 3")
+					ForEach(vm.filteredCountry) { country in
+						Button {
+							vm.searchText = country.name
+							Task {
+								await vm.fetchWeatherForecast(for: vm.searchText)
+								isShowingForecast = true
+							}
+//							vm.searchText = ""
+						} label: {
+							Text("\(country.name), \(country.region), \(country.country)")
+								.accentColor(.primary)
+						}
+					}
 				}
 				
 				Spacer()
+				
 				Button {
 					dismiss()
+					vm.searchText = ""
 				} label: {
 					Image(systemName: "xmark")
 						.font(.largeTitle)
@@ -31,7 +49,10 @@ struct SearchView: View {
 				}
 
 			}
-			.searchable(text: $searchTerm, prompt: "Search")
+			.searchable(text: $vm.searchText, prompt: "Search")
+			.sheet(isPresented: $isShowingForecast) {
+				AddForecastSheet(vm: vm, geo: geo)
+			}
 		}
 		.ignoresSafeArea()
 		.preferredColorScheme(.dark)
@@ -40,6 +61,15 @@ struct SearchView: View {
 		
 }
 
-#Preview {
-    SearchView()
+struct SearchViewPreviewWrapper: View {
+	var body: some View {
+		GeometryReader { geo in
+			SearchView(vm: WeatherViewModel(), geo: geo)
+		}
+	}
 }
+
+#Preview {
+	SearchViewPreviewWrapper()
+}
+

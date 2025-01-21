@@ -16,16 +16,22 @@ struct WeatherModel: Decodable {
 	struct Location: Decodable {
 		let name: String
 		let currentDateEpoch: Date
+		let timeZoneId: String
 		
 		
 		enum CodingKeys: String, CodingKey {
 			case name
 			case currentDateEpoch = "localtime_epoch"
+			case timeZoneId = "tz_id"
 		}
 		
 		var now: String {
 			let formatter = DateFormatter()
 			formatter.dateFormat = "E, h:mm a"
+			
+			if let timezone = TimeZone(identifier: timeZoneId) {
+				formatter.timeZone = timezone
+			}
 
 			return formatter.string(from: currentDateEpoch)
 		}

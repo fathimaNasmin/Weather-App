@@ -1,16 +1,16 @@
 //
-//  ContentView.swift
+//  AddForecastSheet.swift
 //  WeatherApp
 //
-//  Created by Fathima Nasmin on 1/13/25.
+//  Created by Fathima Nasmin on 1/21/25.
 //
 
 import SwiftUI
 
-struct ContentView: View {
-	@StateObject private var vm = WeatherViewModel()
-	@State private var searchIsPresented = false
-	//
+struct AddForecastSheet: View {
+	@ObservedObject var vm: WeatherViewModel
+	var geo: GeometryProxy
+	
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
@@ -20,28 +20,36 @@ struct ContentView: View {
 					Color.gray.opacity(0.4)
 				}
 				
-
+				
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarMainView(vm: vm, searchIsPresented: $searchIsPresented, geo: geo)
+					TopBarAddView(vm: vm, geo: geo)
 					
 					MainContentView(vm: vm, geo: geo)
 					
 				}
 				.foregroundColor(.white)
-				.frame(maxWidth: geo.size.width - 10)
+				.frame(maxWidth: geo.size.width / 1.1)
 				.padding(.horizontal, 10)
 				.padding(.bottom, 40)
 			}
-
+			
 			.ignoresSafeArea()
 		}
 
     }
-	
+}
+
+struct AddForecastSheetWrapper: View {
+	var body: some View {
+		GeometryReader { geo in
+			AddForecastSheet(vm: WeatherViewModel(), geo: geo)
+		}
+	}
 }
 
 #Preview {
-    ContentView()
+	AddForecastSheetWrapper()
 }
+
