@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-	@StateObject private var vm = WeatherViewModel()
 	@State private var searchIsPresented = false
+	@ObservedObject var vm: WeatherViewModel
 	//
     var body: some View {
 		GeometryReader { geo in
@@ -26,6 +26,7 @@ struct ContentView: View {
 					// MARK: Top Bar
 					TopBarMainView(vm: vm, searchIsPresented: $searchIsPresented, geo: geo)
 					
+					// MARK: MAIN VIEW
 					MainContentView(vm: vm, geo: geo)
 					
 				}
@@ -34,8 +35,33 @@ struct ContentView: View {
 				.padding(.horizontal, 10)
 				.padding(.bottom, 40)
 			}
-
 			.ignoresSafeArea()
+			
+			// MARK: LOADING SPINNER
+			// Loading Spinner Overlay
+			if vm.isLoading {
+				ZStack {
+					Color.black.opacity(0.5)
+						.ignoresSafeArea()
+					
+					VStack {
+						ProgressView()
+							.progressViewStyle(CircularProgressViewStyle(tint: .white))
+							.scaleEffect(2)
+						
+						Text("Loading Weather...")
+							.font(.title3)
+							.foregroundColor(.white)
+							.padding(.top, 8)
+					}
+					.padding()
+					.padding(.vertical, 20)
+					.background(Color.black.opacity(0.7))
+					.cornerRadius(15)
+				}
+			}
+
+			
 		}
 
     }
@@ -43,5 +69,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+	ContentView(vm: WeatherViewModel())
 }

@@ -13,7 +13,39 @@ struct FetchService {
 	}
 	
 	
-	// Fetching the city suggestions for search
+	/// Function for fetching weather data on current location
+	func fetchWeatherWithLocation(latitude: Double, longitude: Double) async throws -> WeatherModel {
+		// Create the url
+		let baseUrl = URL(string: APIConstants.forecastAPIUrl)
+		
+		var urlComponents = URLComponents(url: baseUrl!, resolvingAgainstBaseURL: false)
+		
+		urlComponents?.queryItems = [
+			URLQueryItem(name: "key", value: apiKey),
+			URLQueryItem(name: "q", value: "\(latitude), \(longitude)"),
+			URLQueryItem(name: "days", value: "9")
+		]
+		
+		let searchUrl = urlComponents?.url
+		
+		// Fetch the data from response
+		let (data, response) = try await URLSession.shared.data(from: searchUrl!)
+		
+		// Handle the response
+		guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+			print(response)
+			throw FetchError.badResponse
+		}
+		
+		// Decode the response
+		let decoder = JSONDecoder()
+		decoder.dateDecodingStrategy = .secondsSince1970
+		let forecastForCoordiantes = try decoder.decode(WeatherModel.self, from: data)
+		return forecastForCoordiantes
+	}
+	
+	
+	/// Function for fetching the city suggestions for search
 	func fetchCitySuggestion(from query: String) async throws -> [CityModel]{
 		// Creation of URL
 		let baseUrl = URL(string: APIConstants.searchAPIUrl)
@@ -42,7 +74,7 @@ struct FetchService {
 	}
 	
 	
-	// Fetch request for the city
+	/// Fetch request for the city
 	func fetchWeather(for city: String) async throws -> WeatherModel {
 		// Create the url
 		let baseUrl = URL(string: APIConstants.forecastAPIUrl)
