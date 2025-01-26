@@ -12,6 +12,7 @@ struct SearchView: View {
 	
 	@ObservedObject var vm = WeatherViewModel()
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	@StateObject var searchVM = WeatherViewModel()
 
 	@State private var searchTerm = ""
 	@State private var isShowingForecast = false
@@ -25,11 +26,11 @@ struct SearchView: View {
 		NavigationStack {
 			VStack {
 				List {
-					ForEach(vm.filteredCountry) { country in
+					ForEach(searchVM.filteredCountry) { country in
 						Button {
-							vm.searchText = country.name
+							searchVM.searchText = country.name
 							Task {
-								await vm.fetchWeatherForecast(for: vm.searchText)
+								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
 								isShowingForecast = true
 							}
 						} label: {
@@ -43,7 +44,7 @@ struct SearchView: View {
 				
 				Button {
 					dismiss()
-					vm.searchText = ""
+					searchVM.searchText = ""
 				} label: {
 					Image(systemName: "xmark")
 						.font(.largeTitle)
@@ -51,9 +52,9 @@ struct SearchView: View {
 				}
 
 			}
-			.searchable(text: $vm.searchText, prompt: "Search")
+			.searchable(text: $searchVM.searchText, prompt: "Search")
 			.sheet(isPresented: $isShowingForecast) {
-				AddForecastSheet(vm: vm, cityCoreDataVM: cityCoreDataVM, weather: weather, geo: geo)
+				AddForecastSheet(vm: searchVM, cityCoreDataVM: cityCoreDataVM, weather: weather, geo: geo)
 			}
 		}
 		.ignoresSafeArea()
