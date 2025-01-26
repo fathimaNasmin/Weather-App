@@ -89,7 +89,9 @@ class CityCoreDataViewModel: ObservableObject {
 			let newCity = City(context: container.viewContext)
 			newCity.id = UUID()
 			newCity.name = cityName
-			storedCityNames.append(cityName)
+			DispatchQueue.main.async {
+				self.storedCityNames.append(cityName)
+			}
 			await saveData()
 
 			print("Added to the store")
