@@ -8,26 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
-	@State private var searchIsPresented = false
 	@ObservedObject var vm: WeatherViewModel
-	//
+	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	@State private var searchIsPresented = false
+
+	let weather: WeatherModel
+
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
-				if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+				if let weatherCondition = WeatherCondition(rawValue: weather.current.condition.text) {
 					weatherCondition.backgroundGradient
 				} else {
 					Color.gray.opacity(0.4)
 				}
 				
-
+				
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarMainView(vm: vm, searchIsPresented: $searchIsPresented, geo: geo)
+					TopBarMainView(vm: vm, cityCoreDataVM: cityCoreDataVM, weather: weather, searchIsPresented: $searchIsPresented, geo: geo)
 					
 					// MARK: MAIN VIEW
-					MainContentView(vm: vm, geo: geo)
+					MainContentView(geo: geo, weather: weather)
 					
 				}
 				.foregroundColor(.white)
@@ -37,37 +40,11 @@ struct ContentView: View {
 			}
 			.ignoresSafeArea()
 			
-			// MARK: LOADING SPINNER
-			// Loading Spinner Overlay
-			if vm.isLoading {
-				ZStack {
-					Color.black.opacity(0.5)
-						.ignoresSafeArea()
-					
-					VStack {
-						ProgressView()
-							.progressViewStyle(CircularProgressViewStyle(tint: .white))
-							.scaleEffect(2)
-						
-						Text("Loading Weather...")
-							.font(.title3)
-							.foregroundColor(.white)
-							.padding(.top, 8)
-					}
-					.padding()
-					.padding(.vertical, 20)
-					.background(Color.black.opacity(0.7))
-					.cornerRadius(15)
-				}
-			}
-
-			
 		}
 
-    }
-	
+	}
 }
 
-#Preview {
-	ContentView(vm: WeatherViewModel())
-}
+//#Preview {
+//	ContentView(cityCoreDataVM: CityCoreDataViewModel())
+//}

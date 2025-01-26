@@ -10,28 +10,54 @@ import Combine
 
 @main
 struct WeatherAppApp: App {
-	@StateObject var locationManager = LocationManager()
 	@StateObject private var vm = WeatherViewModel()
+	@StateObject private var cityCoreDatavm = CityCoreDataViewModel()
+	
+	@StateObject var locationManager = LocationManager()
+	
 	@State private var cancellables = Set<AnyCancellable>()
 	
     var body: some Scene {
-        WindowGroup {
-			ContentView(vm: vm)
-				.onAppear {
-					locationManager.checkLocationAuthoriazation()
-					
-					// Observe updates to lastKnownLocation
-					locationManager.$lastKnownLocation
-						.compactMap { $0 } // Ensure non-nil coordinates
-						.first() // Execute only for the first valid location
-						.sink { locationCoordinates in
-							Task {
-								await vm.fetchWeatherForecast(in: locationCoordinates)
-							}
-						}
-						.store(in: &cancellables) // Retain the subscription
+		WindowGroup {
+			TabView {
+				// First Tab: Current location weather
+				if !vm.isLoading {
+					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
+						.tag("CurrentLocation")
+				} else {
+					// Placeholder for when current location weather data is not available
+					Text("Loading current location weather...")
+						.tag("CurrentLocation")
 				}
-        }
+//				ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
+				
+				ForEach(cityCoreDatavm.storedCityNames, id: \.self) { cityName in
+					if let weather = cityCoreDatavm.storedCityWeatherData[cityName] {
+						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: weather)
+					}
+				}
+			}
+			.tabViewStyle(.page)
+			.ignoresSafeArea()
+			.onAppear {
+				locationManager.checkLocationAuthoriazation()
+
+				// Observe updates to lastKnownLocation
+				locationManager.$lastKnownLocation
+					.compactMap { $0 } // Ensure non-nil coordinates
+					.first() // Execute only for the first valid location
+					.sink { locationCoordinates in
+						Task {
+							await vm.fetchWeatherForecast(in: locationCoordinates)
+						}
+					}
+					.store(in: &cancellables) // Retain the subscription
+				
+				Task {
+					await cityCoreDatavm.fetchStoredCityWeatherData()
+				}
+			}
+		}
     }
 }
 
@@ -49,3 +75,6 @@ struct WeatherAppApp: App {
 
 // MainContentView: Show hourly weather from Now()
 // MainContentView: Show chance of rain from Now()
+
+
+// current location name is already exists in the core data:
