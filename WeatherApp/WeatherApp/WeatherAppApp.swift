@@ -26,7 +26,7 @@ struct WeatherAppApp: App {
 						.tag("CurrentLocation")
 				} else {
 					// Placeholder for when current location weather data is not available
-					Text("Loading current location weather...")
+					LoadingView()
 						.tag("CurrentLocation")
 				}
 //				ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
