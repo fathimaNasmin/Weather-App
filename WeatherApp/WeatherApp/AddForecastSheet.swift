@@ -9,6 +9,10 @@ import SwiftUI
 
 struct AddForecastSheet: View {
 	@ObservedObject var vm: WeatherViewModel
+	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	
+	let weather: WeatherModel
+	
 	var geo: GeometryProxy
 	
     var body: some View {
@@ -24,9 +28,9 @@ struct AddForecastSheet: View {
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarAddView(vm: vm, geo: geo)
+					TopBarAddView(vm: vm, cityCoreDataVM: cityCoreDataVM, geo: geo)
 					
-					MainContentView(vm: vm, geo: geo)
+					MainContentView(geo: geo, weather: weather)
 					
 				}
 				.foregroundColor(.white)
@@ -41,15 +45,15 @@ struct AddForecastSheet: View {
     }
 }
 
-struct AddForecastSheetWrapper: View {
-	var body: some View {
-		GeometryReader { geo in
-			AddForecastSheet(vm: WeatherViewModel(), geo: geo)
-		}
-	}
-}
-
-#Preview {
-	AddForecastSheetWrapper()
-}
+//struct AddForecastSheetWrapper: View {
+//	var body: some View {
+//		GeometryReader { geo in
+//			AddForecastSheet(cityCoreDataVM: CityCoreDataViewModel(), geo: geo)
+//		}
+//	}
+//}
+//
+//#Preview {
+//	AddForecastSheetWrapper()
+//}
 

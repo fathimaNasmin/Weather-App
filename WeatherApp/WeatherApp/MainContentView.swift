@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct MainContentView: View {
-	@ObservedObject var vm: WeatherViewModel
+//	@ObservedObject var vm: WeatherViewModel
 	var geo: GeometryProxy
+	let weather: WeatherModel
 	
     var body: some View {
 		VStack {
@@ -21,7 +22,7 @@ struct MainContentView: View {
 						
 						VStack {
 							HStack {
-								if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+								if let weatherCondition = WeatherCondition(rawValue: weather.current.condition.text) {
 									Image(systemName: weatherCondition.sfSymbol)
 										.font(.largeTitle.weight(.thin))
 										.imageScale(.large)
@@ -34,9 +35,9 @@ struct MainContentView: View {
 								}
 								
 								
-								Text(vm.forecast.current.condition.text)
+								Text(weather.current.condition.text)
 									.font(.custom(Fonts.mediumLight,
-												  size:vm.forecast.current.condition.text.count < 10 ? 35 : 28)
+												  size:weather.current.condition.text.count < 10 ? 35 : 28)
 									)
 									.fixedSize(horizontal: false, vertical: true)
 									.multilineTextAlignment(.center)
@@ -45,7 +46,7 @@ struct MainContentView: View {
 							}
 							
 							HStack(alignment: .top) {
-								Text("\(vm.forecast.current.formatTempC)°")
+								Text("\(weather.current.formatTempC)°")
 									.font(.custom(Fonts.mediumLight, size: 100))
 							}
 							.padding(.top, -5)
@@ -59,7 +60,7 @@ struct MainContentView: View {
 						// low and high
 						VStack {
 							HStack {
-								Text(vm.forecast.forecast.forecastDay[0].day.formattedMaxTempC)
+								Text(weather.forecast.forecastDay[0].day.formattedMaxTempC)
 									.font(.custom(Fonts.mediumLight, size: 30))
 									.padding(.bottom, -1)
 								Image(systemName: "degreesign.celsius")
@@ -71,7 +72,7 @@ struct MainContentView: View {
 							
 							
 							HStack {
-								Text(vm.forecast.forecast.forecastDay[0].day.formattedMinTempC)
+								Text(weather.forecast.forecastDay[0].day.formattedMinTempC)
 									.font(.custom(Fonts.mediumLight, size: 30))
 									.padding(.top, -1)
 								
@@ -87,7 +88,7 @@ struct MainContentView: View {
 					
 					// MARK: Swift Charts
 					
-					HourlyWeatherChartView(hourlyData: vm.forecast.forecast.forecastDay[0].hourly)
+					HourlyWeatherChartView(hourlyData: weather.forecast.forecastDay[0].hourly)
 						.frame(width: geo.size.width)
 						.padding(.horizontal, 12)
 					
@@ -105,14 +106,14 @@ struct MainContentView: View {
 					// Grid
 					Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 						GridRow {
-							cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(vm.forecast.current.feelslikeC)°")
-							cell(geometry: geo, image: "wind", text: "wind", value: "\(vm.forecast.current.windKph) km/h")
-							cell(geometry: geo, image: "humidity", text: "humidity", value: "\(vm.forecast.current.humidity)%")
+							cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(weather.current.feelslikeC)°")
+							cell(geometry: geo, image: "wind", text: "wind", value: "\(weather.current.windKph) km/h")
+							cell(geometry: geo, image: "humidity", text: "humidity", value: "\(weather.current.humidity)%")
 						}
 						GridRow {
-							cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "\(vm.forecast.current.pressureIn) in")
-							cell(geometry: geo, image: "eye", text: "visibility", value: "\(vm.forecast.current.visibility)")
-							cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "\(vm.forecast.current.dewpointC)°")
+							cell(geometry: geo, image: "gauge.with.needle", text: "pressure", value: "\(weather.current.pressureIn) in")
+							cell(geometry: geo, image: "eye", text: "visibility", value: "\(weather.current.visibility)")
+							cell(geometry: geo, image: "thermometer.low", text: "dew point", value: "\(weather.current.dewpointC)°")
 						}
 					}
 					
@@ -129,7 +130,7 @@ struct MainContentView: View {
 					.padding()
 					
 					// MARK: swift charts
-					ChanceOfRainChartView(hourlyRainData: vm.forecast.forecast.forecastDay[0].hourly)
+					ChanceOfRainChartView(hourlyRainData: weather.forecast.forecastDay[0].hourly)
 					
 					
 					
@@ -147,7 +148,7 @@ struct MainContentView: View {
 						// Grid
 						Grid {
 							GridRow {
-								ForEach(vm.forecast.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
+								ForEach(weather.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
 									renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
 								}
 								
@@ -243,14 +244,14 @@ struct MainContentView: View {
 }
 
 
-struct MainContentPreviewWrapper: View {
-	var body: some View {
-		GeometryReader { geo in
-			MainContentView(vm: WeatherViewModel(), geo: geo)
-		}
-	}
-}
-
-#Preview {
-	MainContentPreviewWrapper()
-}
+//struct MainContentPreviewWrapper: View {
+//	var body: some View {
+//		GeometryReader { geo in
+//			MainContentView(geo: geo)
+//		}
+//	}
+//}
+//
+//#Preview {
+//	MainContentPreviewWrapper()
+//}

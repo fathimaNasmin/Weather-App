@@ -10,11 +10,15 @@ import SwiftUI
 struct SearchView: View {
 	@Environment(\.dismiss) var dismiss
 	
-	@ObservedObject var vm: WeatherViewModel
+	@ObservedObject var vm = WeatherViewModel()
+	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	@StateObject var searchVM = WeatherViewModel()
+
 	@State private var searchTerm = ""
 	@State private var isShowingForecast = false
 	
 	var geo: GeometryProxy
+	let weather: WeatherModel
 	
 	
     var body: some View {
@@ -22,14 +26,13 @@ struct SearchView: View {
 		NavigationStack {
 			VStack {
 				List {
-					ForEach(vm.filteredCountry) { country in
+					ForEach(searchVM.filteredCountry) { country in
 						Button {
-							vm.searchText = country.name
+							searchVM.searchText = country.name
 							Task {
-								await vm.fetchWeatherForecast(for: vm.searchText)
+								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
 								isShowingForecast = true
 							}
-//							vm.searchText = ""
 						} label: {
 							Text("\(country.name), \(country.region), \(country.country)")
 								.accentColor(.primary)
@@ -41,7 +44,7 @@ struct SearchView: View {
 				
 				Button {
 					dismiss()
-					vm.searchText = ""
+					searchVM.searchText = ""
 				} label: {
 					Image(systemName: "xmark")
 						.font(.largeTitle)
@@ -49,9 +52,9 @@ struct SearchView: View {
 				}
 
 			}
-			.searchable(text: $vm.searchText, prompt: "Search")
+			.searchable(text: $searchVM.searchText, prompt: "Search")
 			.sheet(isPresented: $isShowingForecast) {
-				AddForecastSheet(vm: vm, geo: geo)
+				AddForecastSheet(vm: searchVM, cityCoreDataVM: cityCoreDataVM, weather: weather, geo: geo)
 			}
 		}
 		.ignoresSafeArea()
@@ -61,15 +64,15 @@ struct SearchView: View {
 		
 }
 
-struct SearchViewPreviewWrapper: View {
-	var body: some View {
-		GeometryReader { geo in
-			SearchView(vm: WeatherViewModel(), geo: geo)
-		}
-	}
-}
-
-#Preview {
-	SearchViewPreviewWrapper()
-}
+//struct SearchViewPreviewWrapper: View {
+//	var body: some View {
+//		GeometryReader { geo in
+//			SearchView(cityCoreDataVM: CityCoreDataViewModel(), geo: geo)
+//		}
+//	}
+//}
+//
+//#Preview {
+//	SearchViewPreviewWrapper()
+//}
 

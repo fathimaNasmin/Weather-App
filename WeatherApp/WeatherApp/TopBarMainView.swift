@@ -9,6 +9,9 @@ import SwiftUI
 
 struct TopBarMainView: View {
 	@ObservedObject var vm: WeatherViewModel
+	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	let weather: WeatherModel
+	
 	@Binding var searchIsPresented: Bool
 	
 	var geo: GeometryProxy
@@ -22,10 +25,10 @@ struct TopBarMainView: View {
 				Spacer()
 				
 				VStack {
-					Text(vm.forecast.location.name)
+					Text(weather.location.name)
 						.font(.custom(Fonts.mediumLight, size: 35))
 					
-					Text(vm.forecast.location.now)
+					Text(weather.location.now)
 						.font(.custom(Fonts.mediumLight, size: 20))
 				}
 				
@@ -39,7 +42,7 @@ struct TopBarMainView: View {
 						.font(.title.weight(.thin))
 				}
 				.fullScreenCover(isPresented: $searchIsPresented) {
-					SearchView(vm: vm, geo: geo)
+					SearchView(vm: vm, cityCoreDataVM: cityCoreDataVM, geo: geo, weather: weather)
 				}
 				
 				
@@ -54,16 +57,20 @@ struct TopBarMainView: View {
     }
 }
 
-struct TopBarAddMainWrapper: View {
-	@Binding var previewSearchIsPresented: Bool
-	var body: some View {
-		GeometryReader { geo in
-			TopBarMainView(vm: WeatherViewModel(), searchIsPresented: $previewSearchIsPresented, geo: geo)
-		}
-	}
-}
 
-#Preview {
-	@Previewable @State var previewSearchIsPresented = false
-	TopBarAddMainWrapper(previewSearchIsPresented: $previewSearchIsPresented)
-}
+// For Preview
+//struct TopBarAddMainWrapper: View {
+//	@Binding var previewSearchIsPresented: Bool
+//	let weather: WeatherModel
+//	
+//	var body: some View {
+//		GeometryReader { geo in
+//			TopBarMainView(weather: weather, searchIsPresented: $previewSearchIsPresented, geo: geo)
+//		}
+//	}
+//}
+//
+//#Preview {
+//	@Previewable @State var previewSearchIsPresented = false
+//	TopBarAddMainWrapper(previewSearchIsPresented: $previewSearchIsPresented, weather: WeatherModel())
+//}

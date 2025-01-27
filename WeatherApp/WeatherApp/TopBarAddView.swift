@@ -9,6 +9,8 @@ import SwiftUI
 
 struct TopBarAddView: View {
 	@ObservedObject var vm: WeatherViewModel
+	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	
 	@Environment(\.dismiss) var dismiss
 	var geo: GeometryProxy
 	
@@ -19,7 +21,6 @@ struct TopBarAddView: View {
 				Button {
 					print("Dismiss the sheet")
 					dismiss()
-					vm.searchText = ""
 				} label: {
 					Text("Cancel")
 						.accentColor(.primary)
@@ -41,9 +42,12 @@ struct TopBarAddView: View {
 				Spacer()
 				
 				Button {
-					// Add to the core data
+					Task {
+						await cityCoreDataVM.addCityName(cityName: vm.searchText)
+					}
+					dismiss()
 				} label: {
-					Text("Add")
+					Text(cityCoreDataVM.storedCityNames.contains(vm.searchText) ? "" : "Add")
 						.accentColor(.primary)
 						.font(.custom(Fonts.RobotoCondensedSemiBold, size: 20))
 				}
@@ -61,14 +65,14 @@ struct TopBarAddView: View {
     }
 }
 
-struct TopBarAddViewWrapper: View {
-	var body: some View {
-		GeometryReader { geo in
-			TopBarAddView(vm: WeatherViewModel(), geo: geo)
-		}
-	}
-}
-
-#Preview {
-	TopBarAddViewWrapper()
-}
+//struct TopBarAddViewWrapper: View {
+//	var body: some View {
+//		GeometryReader { geo in
+//			TopBarAddView(cityCoreDataVM: CityCoreDataViewModel(), geo: geo)
+//		}
+//	}
+//}
+//
+//#Preview {
+//	TopBarAddViewWrapper()
+//}
