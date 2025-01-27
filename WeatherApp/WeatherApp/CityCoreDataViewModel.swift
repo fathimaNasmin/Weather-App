@@ -92,7 +92,7 @@ class CityCoreDataViewModel: ObservableObject {
 			DispatchQueue.main.async {
 				self.storedCityNames.append(cityName)
 			}
-			await saveData()
+			await saveAndGetUpdatedData()
 
 			print("Added to the store")
 		}
@@ -110,11 +110,14 @@ class CityCoreDataViewModel: ObservableObject {
 //	}
 	
 	/// Function to save the data to the core data
-	func saveData() async{
+	func saveAndGetUpdatedData() async{
 		do {
 			try container.viewContext.save()
+			
+			try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
 			fetchStoredCities() // To get the updated data from core data
 			await fetchStoredCityWeatherData()
+			print("saved successfully")
 		}catch let error {
 			print("Error on saving: \(error)")
 		}
