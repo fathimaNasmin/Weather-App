@@ -17,10 +17,15 @@ func hourInString(date: Date) -> String {
 
 
 struct HourlyWeatherChartView: View {
+	@EnvironmentObject var temperatureUnit: TemperatureUnitState
 	let hourlyData: [HourForecast]
 	
 	var minTempC: Double? {
 		hourlyData.min(by: { $0.tempC < $1.tempC })?.tempC
+	}
+	
+	var minTempF: Double? {
+		hourlyData.min(by: { $0.tempF < $1.tempF })?.tempF
 	}
 
 	var body: some View {
@@ -32,7 +37,7 @@ struct HourlyWeatherChartView: View {
 						ForEach(hourlyData, id: \.time) { temperature in
 							LineMark(
 								x: .value("Time", temperature.date),
-								y: .value("Temperature", temperature.tempC)
+								y: .value("Temperature", temperatureUnit.isCelsius ? temperature.tempC : temperature.tempF)
 							)
 							.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
 							.foregroundStyle(Color.white.opacity(0.2))
@@ -40,8 +45,8 @@ struct HourlyWeatherChartView: View {
 							
 							// RuleMark: To show grid line to temperature
 							RuleMark(x: .value("time", temperature.date) ,
-									 yStart: .value("start", minTempC ?? 0) ,
-									 yEnd: .value("end", temperature.tempC)
+									 yStart: .value("start", temperatureUnit.isCelsius ? (minTempC ?? 0) : (minTempF ?? 0)),
+									 yEnd: .value("end", temperatureUnit.isCelsius ? temperature.tempC : temperature.tempF)
 							)
 							.lineStyle(.init(lineWidth: 1, dash: [3, 2]))
 							.foregroundStyle(Color.white.opacity(0.2))
@@ -50,7 +55,7 @@ struct HourlyWeatherChartView: View {
 							// PointMark: Add Annotations for each temperature point
 							PointMark(
 								x: .value("Time", temperature.date),
-								y: .value("Temperature", temperature.tempC)
+								y: .value("Temperature", temperatureUnit.isCelsius ? temperature.tempC : temperature.tempF)
 							)
 							.symbol {
 								Circle()
@@ -58,7 +63,7 @@ struct HourlyWeatherChartView: View {
 									.foregroundStyle(Color.white)
 							}
 							.annotation(position: .top, alignment: .center) {
-								Text("\(temperature.tempC, specifier: "%.0f")°")
+								Text("\(temperatureUnit.isCelsius ? temperature.tempC : temperature.tempF, specifier: "%.0f")°")
 									.font(.custom(Fonts.RobotoCondensedSemiBold, size: 14))
 									.foregroundColor(.white)
 									.padding(.bottom, 2)
