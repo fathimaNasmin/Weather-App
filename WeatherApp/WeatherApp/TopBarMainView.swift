@@ -8,19 +8,40 @@
 import SwiftUI
 
 struct TopBarMainView: View {
+	@EnvironmentObject var temperatureUnit: TemperatureUnitState
 	@ObservedObject var vm: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
 	let weather: WeatherModel
 	
 	@Binding var searchIsPresented: Bool
+//	@State var isCelsius: Bool = true
 	
 	var geo: GeometryProxy
 	
     var body: some View {
 		VStack {
 			HStack{
-				Image(systemName: "line.3.horizontal")
-					.font(.title.weight(.thin))
+				Menu {
+					Button {
+						print("F Pressed")
+//						isCelsius = false
+						temperatureUnit.isCelsius = false
+					} label: {
+						Text("Fahrenheit")
+						if !temperatureUnit.isCelsius { Image(systemName: "checkmark") }
+					}
+					Button {
+						print("C Pressed")
+						temperatureUnit.isCelsius = true
+					} label: {
+						Text("Celsius")
+						if temperatureUnit.isCelsius { Image(systemName: "checkmark") }
+					}
+
+				} label: {
+					Image(systemName: "ellipsis")
+						.font(.title.weight(.thin))
+				}
 				
 				Spacer()
 				
@@ -58,7 +79,7 @@ struct TopBarMainView: View {
 }
 
 
-// For Preview
+//// For Preview
 //struct TopBarAddMainWrapper: View {
 //	@Binding var previewSearchIsPresented: Bool
 //	let weather: WeatherModel

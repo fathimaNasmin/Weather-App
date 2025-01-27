@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainContentView: View {
 //	@ObservedObject var vm: WeatherViewModel
+	@EnvironmentObject var temperatureUnit: TemperatureUnitState
 	var geo: GeometryProxy
 	let weather: WeatherModel
 	
@@ -46,7 +47,7 @@ struct MainContentView: View {
 							}
 							
 							HStack(alignment: .top) {
-								Text("\(weather.current.formatTempC)°")
+								Text("\(temperatureUnit.isCelsius ? weather.current.formatTempC : weather.current.formatTempF)°")
 									.font(.custom(Fonts.mediumLight, size: 100))
 							}
 							.padding(.top, -5)
@@ -60,10 +61,10 @@ struct MainContentView: View {
 						// low and high
 						VStack {
 							HStack {
-								Text(weather.forecast.forecastDay[0].day.formattedMaxTempC)
+								Text(temperatureUnit.isCelsius ? weather.forecast.forecastDay[0].day.formattedMaxTempC : weather.forecast.forecastDay[0].day.formattedMaxTempF)
 									.font(.custom(Fonts.mediumLight, size: 30))
 									.padding(.bottom, -1)
-								Image(systemName: "degreesign.celsius")
+								Image(systemName: temperatureUnit.isCelsius ? "degreesign.celsius" : "degreesign.fahrenheit")
 									.font(.title.weight(.thin))
 							}
 							Rectangle()
@@ -72,11 +73,11 @@ struct MainContentView: View {
 							
 							
 							HStack {
-								Text(weather.forecast.forecastDay[0].day.formattedMinTempC)
+								Text(temperatureUnit.isCelsius ?  weather.forecast.forecastDay[0].day.formattedMinTempC : weather.forecast.forecastDay[0].day.formattedMinTempF)
 									.font(.custom(Fonts.mediumLight, size: 30))
 									.padding(.top, -1)
 								
-								Image(systemName: "degreesign.celsius")
+								Image(systemName: temperatureUnit.isCelsius ? "degreesign.celsius" : "degreesign.fahrenheit")
 									.font(.title.weight(.thin))
 							}
 						}
@@ -106,7 +107,7 @@ struct MainContentView: View {
 					// Grid
 					Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 						GridRow {
-							cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(weather.current.feelslikeC)°")
+							cell(geometry: geo, image: "thermometer.variable", text: "feels like", value: "\(temperatureUnit.isCelsius ? weather.current.feelslikeC : weather.current.feelslikeF)°")
 							cell(geometry: geo, image: "wind", text: "wind", value: "\(weather.current.windKph) km/h")
 							cell(geometry: geo, image: "humidity", text: "humidity", value: "\(weather.current.humidity)%")
 						}
@@ -149,7 +150,7 @@ struct MainContentView: View {
 						Grid {
 							GridRow {
 								ForEach(weather.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
-									renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(data.day.formattedMaxTempC)°", low: "\(data.day.formattedMinTempC)°")
+									renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(temperatureUnit.isCelsius ?  data.day.formattedMaxTempC : data.day.formattedMaxTempF )°", low: "\(temperatureUnit.isCelsius ? data.day.formattedMinTempC : data.day.formattedMaxTempF )°")
 								}
 								
 								
