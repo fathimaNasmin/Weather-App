@@ -12,6 +12,7 @@ import Combine
 struct WeatherAppApp: App {
 	@StateObject private var vm = WeatherViewModel()
 	@StateObject private var cityCoreDatavm = CityCoreDataViewModel()
+	@StateObject private var temperatureUnitState = TemperatureUnitState()
 	
 	@StateObject var locationManager = LocationManager()
 	
@@ -39,6 +40,7 @@ struct WeatherAppApp: App {
 			}
 			.tabViewStyle(.page)
 			.ignoresSafeArea()
+			.environmentObject(temperatureUnitState)
 			.onAppear {
 				locationManager.checkLocationAuthoriazation()
 
