@@ -68,13 +68,7 @@ struct WeatherAppApp: App {
 // SearchView: Remove search list and add default feature that same as in weather app
 // SearchView: Remove clearing text after button tapped
 
-// @Action: Add to the city name to the core data or swift data
-// Core location: On app open, get the weather of the current location of the device.
-// core data or swift data: To store the several city names
-
 
 // MainContentView: Show hourly weather from Now()
 // MainContentView: Show chance of rain from Now()
 
-
-// current location name is already exists in the core data:
