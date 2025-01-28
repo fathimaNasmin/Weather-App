@@ -16,6 +16,7 @@ struct SearchView: View {
 
 	@State private var searchTerm = ""
 	@State private var isShowingForecast = false
+	@Binding var selectedCityTab: String
 	
 	var geo: GeometryProxy
 	let weather: WeatherModel
@@ -25,31 +26,22 @@ struct SearchView: View {
 			
 		NavigationStack {
 			VStack {
-				List {
-					ForEach(searchVM.filteredCountry) { country in
-						Button {
-							searchVM.searchText = country.name
-							Task {
-								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
-								isShowingForecast = true
-							}
-						} label: {
-							Text("\(country.name), \(country.region), \(country.country)")
-								.accentColor(.primary)
-						}
-					}
-				}
+//				List {
+//					ForEach(searchVM.filteredCountry) { country in
+//						Button {
+//							searchVM.searchText = country.name
+//							Task {
+//								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
+//								isShowingForecast = true
+//							}
+//						} label: {
+//							Text("\(country.name), \(country.region), \(country.country)")
+//								.accentColor(.primary)
+//						}
+//					}
+//				}
 				
-				Spacer()
-				
-				Button {
-					dismiss()
-					searchVM.searchText = ""
-				} label: {
-					Image(systemName: "xmark")
-						.font(.largeTitle)
-						.foregroundColor(.white)
-				}
+				CityListView(cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab)
 
 			}
 			.searchable(text: $searchVM.searchText, prompt: "Search")

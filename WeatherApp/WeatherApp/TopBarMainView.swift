@@ -14,6 +14,7 @@ struct TopBarMainView: View {
 	let weather: WeatherModel
 	
 	@Binding var searchIsPresented: Bool
+	@Binding var selectedCityTab: String
 //	@State var isCelsius: Bool = true
 	
 	var geo: GeometryProxy
@@ -57,13 +58,13 @@ struct TopBarMainView: View {
 				Spacer()
 				
 				Button {
-					searchIsPresented = true
+					searchIsPresented.toggle()
 				} label: {
 					Image(systemName: "plus")
 						.font(.title.weight(.thin))
 				}
 				.sheet(isPresented: $searchIsPresented) {
-					SearchView(vm: vm, cityCoreDataVM: cityCoreDataVM, geo: geo, weather: weather)
+					SearchView(vm: vm, cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab, geo: geo, weather: weather)
 				}
 				
 				
