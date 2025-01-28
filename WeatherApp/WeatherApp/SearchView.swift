@@ -26,25 +26,11 @@ struct SearchView: View {
 			
 		NavigationStack {
 			VStack {
-//				List {
-//					ForEach(searchVM.filteredCountry) { country in
-//						Button {
-//							searchVM.searchText = country.name
-//							Task {
-//								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
-//								isShowingForecast = true
-//							}
-//						} label: {
-//							Text("\(country.name), \(country.region), \(country.country)")
-//								.accentColor(.primary)
-//						}
-//					}
-//				}
-				
 				CityListView(cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab)
 
 			}
 			.searchable(text: $searchVM.searchText, prompt: "Search")
+			.navigationTitle("Search")
 			.sheet(isPresented: $isShowingForecast) {
 				AddForecastSheet(vm: searchVM, cityCoreDataVM: cityCoreDataVM, weather: weather, geo: geo)
 			}
@@ -68,3 +54,18 @@ struct SearchView: View {
 //	SearchViewPreviewWrapper()
 //}
 
+
+//				List {
+//					ForEach(searchVM.filteredCountry) { country in
+//						Button {
+//							searchVM.searchText = country.name
+//							Task {
+//								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
+//								isShowingForecast = true
+//							}
+//						} label: {
+//							Text("\(country.name), \(country.region), \(country.country)")
+//								.accentColor(.primary)
+//						}
+//					}
+//				}
