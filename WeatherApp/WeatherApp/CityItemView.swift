@@ -12,14 +12,20 @@ struct CityItemView: View {
 	let weatherData: WeatherModel
 	
     var body: some View {
-		HStack {
+		ZStack {
+			if let weatherCondition = WeatherCondition(rawValue: weatherData.current.condition.text) {
+				weatherCondition.backgroundGradient
+			} else {
+				Color.gray.opacity(0.4)
+			}
+			
 			VStack {
 				HStack {
 					Text(weatherData.location.name)
 						.fontWeight(.bold)
 					Spacer()
 					
-					Text("\(temperatureUnit.isCelsius ? weatherData.current.formatTempC : weatherData.current.formatTempF)°")
+					Text("\(temperatureUnit.isCelsius ? weatherData.current.formatTempC : weatherData.current.formatTempF)°\(temperatureUnit.isCelsius ? "C" : "F")")
 				}
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 32))
 
@@ -29,15 +35,18 @@ struct CityItemView: View {
 				HStack {
 					Text(weatherData.current.condition.text)
 					Spacer()
-					Text("H: \(temperatureUnit.isCelsius ? weatherData.forecast.forecastDay[0].day.formattedMaxTempC : weatherData.forecast.forecastDay[0].day.formattedMaxTempF)")
-					Text("L: \(temperatureUnit.isCelsius ? weatherData.forecast.forecastDay[0].day.formattedMinTempC : weatherData.forecast.forecastDay[0].day.formattedMinTempF)")
+					
+					Text("H: \(temperatureUnit.isCelsius ? weatherData.forecast.forecastDay[0].day.formattedMaxTempC : weatherData.forecast.forecastDay[0].day.formattedMaxTempF)°")
+					
+					
+					Text("L: \(temperatureUnit.isCelsius ? weatherData.forecast.forecastDay[0].day.formattedMinTempC : weatherData.forecast.forecastDay[0].day.formattedMinTempF)°")
 				}
 				.font(.custom(Fonts.RobotoCondensedSemiBold, size: 16))
 			}
 			.padding()
 			.foregroundColor(.white)
 		}
-		.frame(height: 100)
+		.frame(height: 110)
 		.frame(maxWidth: .infinity)
 		.background(Color.gray.opacity(0.5))
 		.cornerRadius(10)
