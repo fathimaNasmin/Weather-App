@@ -30,7 +30,6 @@ struct WeatherAppApp: App {
 					LoadingView()
 						.tag("CurrentLocation")
 				}
-//				ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
 				
 				ForEach(cityCoreDatavm.storedCityNames, id: \.self) { cityName in
 					if let weather = cityCoreDatavm.storedCityWeatherData[cityName] {
@@ -66,7 +65,6 @@ struct WeatherAppApp: App {
 
 // TODO:
 
-// ContentView: convert to C or F
 // SearchView: Remove search list and add default feature that same as in weather app
 // SearchView: Remove clearing text after button tapped
 
