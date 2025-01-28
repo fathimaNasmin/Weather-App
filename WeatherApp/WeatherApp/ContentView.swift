@@ -11,6 +11,7 @@ struct ContentView: View {
 	@ObservedObject var vm: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
 	@State private var searchIsPresented = false
+	@Binding var selectedCityTab: String
 
 	let weather: WeatherModel
 
@@ -27,7 +28,7 @@ struct ContentView: View {
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarMainView(vm: vm, cityCoreDataVM: cityCoreDataVM, weather: weather, searchIsPresented: $searchIsPresented, geo: geo)
+					TopBarMainView(vm: vm, cityCoreDataVM: cityCoreDataVM, weather: weather, searchIsPresented: $searchIsPresented, selectedCityTab: $selectedCityTab, geo: geo)
 					
 					// MARK: MAIN VIEW
 					MainContentView(geo: geo, weather: weather)

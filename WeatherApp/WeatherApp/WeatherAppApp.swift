@@ -17,24 +17,25 @@ struct WeatherAppApp: App {
 	@StateObject var locationManager = LocationManager()
 	
 	@State private var cancellables = Set<AnyCancellable>()
+	@State var selectedCityTab: String = ""
 	
     var body: some Scene {
 		WindowGroup {
-			TabView {
+			TabView(selection: $selectedCityTab) {
 				// First Tab: Current location weather
 				if !vm.isLoading {
-					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
+					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, weather: vm.forecast)
 						.tag("CurrentLocation")
 				} else {
 					// Placeholder for when current location weather data is not available
 					LoadingView()
 						.tag("CurrentLocation")
 				}
-//				ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: vm.forecast)
 				
 				ForEach(cityCoreDatavm.storedCityNames, id: \.self) { cityName in
 					if let weather = cityCoreDatavm.storedCityWeatherData[cityName] {
-						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, weather: weather)
+						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, weather: weather)
+							.tag(cityName)
 					}
 				}
 			}
@@ -66,7 +67,6 @@ struct WeatherAppApp: App {
 
 // TODO:
 
-// ContentView: convert to C or F
 // SearchView: Remove search list and add default feature that same as in weather app
 // SearchView: Remove clearing text after button tapped
 
