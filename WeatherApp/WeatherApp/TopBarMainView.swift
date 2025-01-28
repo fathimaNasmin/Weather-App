@@ -62,7 +62,7 @@ struct TopBarMainView: View {
 					Image(systemName: "plus")
 						.font(.title.weight(.thin))
 				}
-				.fullScreenCover(isPresented: $searchIsPresented) {
+				.sheet(isPresented: $searchIsPresented) {
 					SearchView(vm: vm, cityCoreDataVM: cityCoreDataVM, geo: geo, weather: weather)
 				}
 				
