@@ -100,14 +100,36 @@ class CityCoreDataViewModel: ObservableObject {
 	
 	/// Function to delete the city from the core data
 	// Refer to id instead of indexSet
-//	func deleteCityName(indexSet: IndexSet) {
-//		guard let index = indexSet.first else {return}
-//		let entity = storedCityNames[index]
-//		storedCityNames.remove(at: index)
-//		container.viewContext.delete(entity)
-//		saveData()
-//		print("Deleted from store")
-//	}
+	func deleteCity(indexSet: IndexSet) async {
+		let context = container.viewContext
+		
+		guard indexSet.first != nil else {return}
+		
+		for index in indexSet {
+			let cityData = storedCityNames[index]
+			
+			let request: NSFetchRequest<City> = City.fetchRequest()
+			request.predicate = NSPredicate(format:"name == %@", cityData)
+			
+			do {
+				let result = try context.fetch(request)
+				if let objectToDelete = result.first {
+					// Delete the object from Core Data
+					context.delete(objectToDelete)
+					// Remove it from the in-memory dictionary too
+					DispatchQueue.main.async {
+						self.storedCityNames.remove(at: index)
+						self.storedCityWeatherData.removeValue(forKey: cityData)
+					}
+					print("Deleted from store")
+					await saveAndGetUpdatedData()
+				}
+			} catch {
+				print("Error deleting object: \(error)")
+			}
+
+		}
+	}
 	
 	/// Function to save the data to the core data
 	func saveAndGetUpdatedData() async{
