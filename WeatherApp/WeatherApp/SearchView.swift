@@ -25,15 +25,22 @@ struct SearchView: View {
     var body: some View {
 			
 		NavigationStack {
+
+			ZStack {
 			VStack {
 				CityListView(cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab)
-
+				
 			}
-			.searchable(text: $searchVM.searchText, prompt: "Search")
+			//			.searchable(text: $searchVM.searchText, prompt: "Search")
 			.navigationTitle("Search")
 			.sheet(isPresented: $isShowingForecast) {
 				AddForecastSheet(vm: searchVM, cityCoreDataVM: cityCoreDataVM, weather: weather, geo: geo)
 			}
+				
+			SearchingView(searchVM: searchVM, isShowingForecast: $isShowingForecast)
+				.searchable(text: $searchVM.searchText, prompt: "Search")
+		}
+
 		}
 		.ignoresSafeArea()
 		.preferredColorScheme(.dark)
@@ -42,30 +49,54 @@ struct SearchView: View {
 		
 }
 
-//struct SearchViewPreviewWrapper: View {
-//	var body: some View {
-//		GeometryReader { geo in
-//			SearchView(cityCoreDataVM: CityCoreDataViewModel(), geo: geo)
-//		}
-//	}
-//}
-//
-//#Preview {
-//	SearchViewPreviewWrapper()
-//}
+struct SearchingView: View {
+	@Environment(\.isSearching) private var isSearching
+	@ObservedObject var searchVM: WeatherViewModel
+	@State private var searchTerm = ""
+	@Binding var isShowingForecast: Bool
+	
+	var body: some View {
+		ZStack {
+			if isSearching {
+				Color.black.opacity(0.4)
+					.edgesIgnoringSafeArea(.all) // Dim the entire view
+					.transition(.opacity)
+					.animation(.easeInOut, value: searchTerm) // Smooth transition
+
+					VStack {
+						List {
+							ForEach(searchVM.filteredCountry) { country in
+								Button {
+									searchVM.searchText = country.name
+									Task {
+										await searchVM.fetchWeatherForecast(for: searchVM.searchText)
+										isShowingForecast = true
+									}
+								} label: {
+									Text("\(country.name), \(country.region), \(country.country)")
+										.accentColor(.primary)
+								}
+							}
+						}
+						Spacer()
+					}
+			}
+		}
+	}
+}
+
+struct SearchViewPreviewWrapper: View {
+	
+	var body: some View {
+		GeometryReader { geo in
+			SearchView(cityCoreDataVM: CityCoreDataViewModel(), selectedCityTab: .constant("spain"), geo: geo, weather: WeatherModel.sample)
+		}
+	}
+}
+
+#Preview {
+	SearchViewPreviewWrapper()
+}
 
 
-//				List {
-//					ForEach(searchVM.filteredCountry) { country in
-//						Button {
-//							searchVM.searchText = country.name
-//							Task {
-//								await searchVM.fetchWeatherForecast(for: searchVM.searchText)
-//								isShowingForecast = true
-//							}
-//						} label: {
-//							Text("\(country.name), \(country.region), \(country.country)")
-//								.accentColor(.primary)
-//						}
-//					}
-//				}
+
