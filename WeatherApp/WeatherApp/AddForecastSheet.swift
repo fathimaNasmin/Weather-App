@@ -48,12 +48,13 @@ struct AddForecastSheet: View {
 //struct AddForecastSheetWrapper: View {
 //	var body: some View {
 //		GeometryReader { geo in
-//			AddForecastSheet(cityCoreDataVM: CityCoreDataViewModel(), geo: geo)
+//			AddForecastSheet(vm: WeatherViewModel(), cityCoreDataVM: CityCoreDataViewModel(), weather: WeatherModel.sample, geo: geo)
 //		}
 //	}
 //}
 //
 //#Preview {
 //	AddForecastSheetWrapper()
+//		.environmentObject(TemperatureUnitState())
 //}
 
