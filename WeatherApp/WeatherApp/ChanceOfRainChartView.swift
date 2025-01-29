@@ -11,10 +11,6 @@ import Charts
 struct ChanceOfRainChartView: View {
 	let hourlyRainData: [HourForecast]
 	
-//	var minTempC: Double? {
-//		hourlyData.min(by: { $0.tempC < $1.tempC })?.tempC
-//	}
-	
 	var body: some View {
 		VStack {
 			if hourlyRainData.isEmpty {

@@ -13,5 +13,3 @@ struct APIConstants {
 	static let searchAPIUrl = "https://api.weatherapi.com/v1/search.json"
 }
 
-
-//	static let searchAPIUrl = "http://api.weatherapi.com/v1/search.json?key=\(apiKey)"
