@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MainContentView: View {
-//	@ObservedObject var vm: WeatherViewModel
 	@EnvironmentObject var temperatureUnit: TemperatureUnitState
 	var geo: GeometryProxy
 	let weather: WeatherModel

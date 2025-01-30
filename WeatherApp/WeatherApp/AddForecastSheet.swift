@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddForecastSheet: View {
-	@ObservedObject var vm: WeatherViewModel
+	@ObservedObject var searchVM: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
 	
 	let weather: WeatherModel
@@ -18,7 +18,7 @@ struct AddForecastSheet: View {
     var body: some View {
 		GeometryReader { geo in
 			ZStack {
-				if let weatherCondition = WeatherCondition(rawValue: vm.forecast.current.condition.text) {
+				if let weatherCondition = WeatherCondition(rawValue: searchVM.forecast.current.condition.text) {
 					weatherCondition.backgroundGradient
 				} else {
 					Color.gray.opacity(0.4)
@@ -28,7 +28,7 @@ struct AddForecastSheet: View {
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarAddView(vm: vm, cityCoreDataVM: cityCoreDataVM, geo: geo)
+					TopBarAddView(cityCoreDataVM: cityCoreDataVM, geo: geo)
 					
 					MainContentView(geo: geo, weather: weather)
 					
@@ -44,17 +44,3 @@ struct AddForecastSheet: View {
 
     }
 }
-
-//struct AddForecastSheetWrapper: View {
-//	var body: some View {
-//		GeometryReader { geo in
-//			AddForecastSheet(vm: WeatherViewModel(), cityCoreDataVM: CityCoreDataViewModel(), weather: WeatherModel.sample, geo: geo)
-//		}
-//	}
-//}
-//
-//#Preview {
-//	AddForecastSheetWrapper()
-//		.environmentObject(TemperatureUnitState())
-//}
-

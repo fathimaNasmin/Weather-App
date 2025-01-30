@@ -10,10 +10,9 @@ import Combine
 
 @main
 struct WeatherAppApp: App {
-	@StateObject private var vm = WeatherViewModel()
+	@StateObject private var weatherVM = WeatherViewModel()
 	@StateObject private var cityCoreDatavm = CityCoreDataViewModel()
 	@StateObject private var temperatureUnitState = TemperatureUnitState()
-	
 	@StateObject var locationManager = LocationManager()
 	
 	@State private var cancellables = Set<AnyCancellable>()
@@ -22,9 +21,9 @@ struct WeatherAppApp: App {
     var body: some Scene {
 		WindowGroup {
 			TabView(selection: $selectedCityTab) {
-				// First Tab: Current location weather
-				if !vm.isLoading {
-					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: true, weather: vm.forecast)
+				// First Tab: Shows Current location weather
+				if !weatherVM.isLoading {
+					MainView(cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: true, weather: weatherVM.forecast)
 						.tag("CurrentLocation")
 				} else {
 					// Placeholder for when current location weather data is not available
@@ -34,7 +33,7 @@ struct WeatherAppApp: App {
 				
 				ForEach(cityCoreDatavm.storedCityNames, id: \.self) { cityName in
 					if let weather = cityCoreDatavm.storedCityWeatherData[cityName] {
-						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: nil, weather: weather)
+						MainView(cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: nil, weather: weather)
 							.tag(cityName)
 					}
 				}
@@ -42,8 +41,9 @@ struct WeatherAppApp: App {
 			.tabViewStyle(.page)
 			.ignoresSafeArea()
 			.environmentObject(temperatureUnitState)
+			.environmentObject(weatherVM)
 			.onAppear {
-				locationManager.checkLocationAuthoriazation()
+				locationManager.checkLocationAuthorization()
 
 				// Observe updates to lastKnownLocation
 				locationManager.$lastKnownLocation
@@ -51,7 +51,7 @@ struct WeatherAppApp: App {
 					.first() // Execute only for the first valid location
 					.sink { locationCoordinates in
 						Task {
-							await vm.fetchWeatherForecast(in: locationCoordinates)
+							await weatherVM.fetchWeatherForecast(in: locationCoordinates)
 						}
 					}
 					.store(in: &cancellables) // Retain the subscription
@@ -64,13 +64,4 @@ struct WeatherAppApp: App {
     }
 }
 
-
-// TODO:
-
-// SearchView: Remove search list and add default feature that same as in weather app
-// SearchView: Remove clearing text after button tapped
-
-
-// MainContentView: Show hourly weather from Now()
-// MainContentView: Show chance of rain from Now()
 

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ContentView: View {
-	@ObservedObject var vm: WeatherViewModel
+struct MainView: View {
+	@EnvironmentObject var weatherVM: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
 	@State private var searchIsPresented = false
 	@Binding var selectedCityTab: String
@@ -25,11 +25,9 @@ struct ContentView: View {
 					Color.gray.opacity(0.4)
 				}
 				
-				
-				
 				VStack {
-					// MARK: Top Bar
-					TopBarMainView(vm: vm, cityCoreDataVM: cityCoreDataVM, weather: weather, isCurrentLocation: isCurrentLocation, searchIsPresented: $searchIsPresented, selectedCityTab: $selectedCityTab, geo: geo)
+					// MARK: Top Bar of Main View
+					TopBarMainView(cityCoreDataVM: cityCoreDataVM, searchIsPresented: $searchIsPresented, selectedCityTab: $selectedCityTab, weather: weather, isCurrentLocation: isCurrentLocation, geo: geo)
 					
 					// MARK: MAIN VIEW
 					MainContentView(geo: geo, weather: weather)
