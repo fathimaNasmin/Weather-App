@@ -150,7 +150,7 @@ struct MainContentView: View {
 						Grid {
 							GridRow {
 								ForEach(weather.forecast.forecastDay.suffix(from: 2), id:\.date) { data in
-									renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(temperatureUnit.isCelsius ?  data.day.formattedMaxTempC : data.day.formattedMaxTempF )°", low: "\(temperatureUnit.isCelsius ? data.day.formattedMinTempC : data.day.formattedMaxTempF )°")
+									renderDayForcast(geometry: geo, day: data.formattedDateEpoch, rainPercent: data.day.dailyChanceOfRain, image: data.day.condition.trimmedText, high: "\(temperatureUnit.isCelsius ?  data.day.formattedMaxTempC : data.day.formattedMaxTempF )°", low: "\(temperatureUnit.isCelsius ? data.day.formattedMinTempC : data.day.formattedMinTempF )°")
 								}
 								
 								
