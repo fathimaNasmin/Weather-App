@@ -10,13 +10,14 @@ import SwiftUI
 struct TopBarMainView: View {
 	@EnvironmentObject var temperatureUnit: TemperatureUnitState
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
-		
-	@Binding var searchIsPresented: Bool
+
 	@Binding var selectedCityTab: String
 	
 	let weather: WeatherModel
 	let isCurrentLocation: Bool?
 	var geo: GeometryProxy
+	
+	@State private var searchIsPresented = false
 	
     var body: some View {
 		VStack {
@@ -65,10 +66,7 @@ struct TopBarMainView: View {
 				Spacer()
 				
 				Button {
-					print("Plus button tapped")
-					if !searchIsPresented {
-						searchIsPresented = true
-					}
+					searchIsPresented.toggle()
 				} label: {
 					Image(systemName: "plus")
 						.font(.title.weight(.thin))

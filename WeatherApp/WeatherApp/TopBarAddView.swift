@@ -10,6 +10,7 @@ import SwiftUI
 struct TopBarAddView: View {
 	@EnvironmentObject var weatherVM: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+	@ObservedObject var searchVM: WeatherViewModel
 	
 	@Environment(\.dismiss) var dismiss
 	var geo: GeometryProxy
@@ -20,7 +21,6 @@ struct TopBarAddView: View {
 			HStack{
 				// Cancel button
 				Button {
-					print("Dismiss the sheet")
 					dismiss()
 				} label: {
 					Text("Cancel")
@@ -32,10 +32,10 @@ struct TopBarAddView: View {
 				Spacer()
 				
 				VStack {
-					Text(weatherVM.forecast.location.name)
+					Text(searchVM.forecast.location.name)
 						.font(.custom(Fonts.mediumLight, size: 35))
 					
-					Text(weatherVM.forecast.location.now)
+					Text(searchVM.forecast.location.now)
 						.font(.custom(Fonts.mediumLight, size: 20))
 				}
 				
@@ -44,11 +44,11 @@ struct TopBarAddView: View {
 				
 				Button {
 					Task {
-						await cityCoreDataVM.addCityName(cityName: weatherVM.searchText)
+						await cityCoreDataVM.addCityName(cityName: searchVM.searchText)
 					}
 					dismiss()
 				} label: {
-					Text(cityCoreDataVM.storedCityNames.contains(weatherVM.searchText) ? "" : "Add")
+					Text(cityCoreDataVM.storedCityNames.contains(searchVM.searchText) ? "" : "Add")
 						.accentColor(.primary)
 						.font(.custom(Fonts.RobotoCondensedSemiBold, size: 20))
 				}

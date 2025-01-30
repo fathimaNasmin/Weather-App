@@ -28,7 +28,7 @@ struct AddForecastSheet: View {
 				
 				VStack {
 					// MARK: Top Bar
-					TopBarAddView(cityCoreDataVM: cityCoreDataVM, geo: geo)
+					TopBarAddView(cityCoreDataVM: cityCoreDataVM, searchVM: searchVM, geo: geo)
 					
 					MainContentView(geo: geo, weather: weather)
 					

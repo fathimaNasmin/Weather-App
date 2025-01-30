@@ -10,7 +10,6 @@ import SwiftUI
 struct MainView: View {
 	@EnvironmentObject var weatherVM: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
-	@State private var searchIsPresented = false
 	@Binding var selectedCityTab: String
 	
 	let isCurrentLocation: Bool?
@@ -27,7 +26,7 @@ struct MainView: View {
 				
 				VStack {
 					// MARK: Top Bar of Main View
-					TopBarMainView(cityCoreDataVM: cityCoreDataVM, searchIsPresented: $searchIsPresented, selectedCityTab: $selectedCityTab, weather: weather, isCurrentLocation: isCurrentLocation, geo: geo)
+					TopBarMainView(cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab, weather: weather, isCurrentLocation: isCurrentLocation, geo: geo)
 					
 					// MARK: MAIN VIEW
 					MainContentView(geo: geo, weather: weather)
