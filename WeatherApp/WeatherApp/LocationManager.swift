@@ -17,7 +17,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
 		manager.delegate = self
 	}
 	
-	func checkLocationAuthoriazation() {
+	func checkLocationAuthorization() {
 		manager.startUpdatingLocation()
 		
 		switch manager.authorizationStatus {
@@ -37,7 +37,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
 	
 	/// Trigged every time authorization status changes
 	func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-		checkLocationAuthoriazation()
+		checkLocationAuthorization()
 	}
 	
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
