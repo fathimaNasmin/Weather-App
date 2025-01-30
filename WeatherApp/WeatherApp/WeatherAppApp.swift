@@ -24,7 +24,7 @@ struct WeatherAppApp: App {
 			TabView(selection: $selectedCityTab) {
 				// First Tab: Current location weather
 				if !vm.isLoading {
-					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, weather: vm.forecast)
+					ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: true, weather: vm.forecast)
 						.tag("CurrentLocation")
 				} else {
 					// Placeholder for when current location weather data is not available
@@ -34,7 +34,7 @@ struct WeatherAppApp: App {
 				
 				ForEach(cityCoreDatavm.storedCityNames, id: \.self) { cityName in
 					if let weather = cityCoreDatavm.storedCityWeatherData[cityName] {
-						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, weather: weather)
+						ContentView(vm: vm, cityCoreDataVM: cityCoreDatavm, selectedCityTab: $selectedCityTab, isCurrentLocation: nil, weather: weather)
 							.tag(cityName)
 					}
 				}

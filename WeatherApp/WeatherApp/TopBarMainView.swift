@@ -12,6 +12,7 @@ struct TopBarMainView: View {
 	@ObservedObject var vm: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
 	let weather: WeatherModel
+	let isCurrentLocation: Bool?
 	
 	@Binding var searchIsPresented: Bool
 	@Binding var selectedCityTab: String
@@ -24,15 +25,12 @@ struct TopBarMainView: View {
 			HStack{
 				Menu {
 					Button {
-						print("F Pressed")
-//						isCelsius = false
 						temperatureUnit.isCelsius = false
 					} label: {
 						Text("Fahrenheit")
 						if !temperatureUnit.isCelsius { Image(systemName: "checkmark") }
 					}
 					Button {
-						print("C Pressed")
 						temperatureUnit.isCelsius = true
 					} label: {
 						Text("Celsius")
@@ -47,6 +45,15 @@ struct TopBarMainView: View {
 				Spacer()
 				
 				VStack {
+					if isCurrentLocation != nil {
+						HStack {
+							Image(systemName: "location.fill")
+							Text("Current Location")
+						}
+						.font(.custom(Fonts.semiCondensedExtraLight, size: 15))
+						.padding(.bottom, 3)
+						
+					}
 					Text(weather.location.name)
 						.font(.custom(Fonts.mediumLight, size: 35))
 					
