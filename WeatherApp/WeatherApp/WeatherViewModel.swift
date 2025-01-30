@@ -11,8 +11,8 @@ import CoreLocation
 
 class WeatherViewModel: ObservableObject {
 	@Published var forecast: WeatherModel
-	@Published var searchText: String = ""
 	@Published var cityList: [CityModel] = []
+	@Published var searchText: String = ""
 	@Published var isLoading: Bool = true
 	
 	private var cancellables: Set<AnyCancellable> = []
@@ -25,21 +25,9 @@ class WeatherViewModel: ObservableObject {
 		return cityList
 	}
 	
-	// Fetch the data based on searchText
-	@MainActor
-	func updateCityList() async {
-		do {
-			cityList = try await fetcher.fetchCitySuggestion(from: searchText)
-		}catch{
-			print("Error fetching: \(error)")
-		}
-	}
-	
 	init() {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .secondsSince1970
-		
-		
 		
 		guard let data = Bundle.main.url(forResource: "sampleForecast", withExtension: "json") else {
 			fatalError("\'sampleForecast.json\' file not found in the bundle.")
@@ -53,6 +41,11 @@ class WeatherViewModel: ObservableObject {
 			fatalError("Failed to load or decode JSON format : \(error)")
 		}
 		
+		trackChangeInSearchText()
+	}
+	
+	/// Function that tracks the changes in searchText and update the result
+	func trackChangeInSearchText() {
 		// To observe searchText changes
 		$searchText
 			.debounce(for: .milliseconds(300), scheduler: DispatchQueue.main) // Prevents frequent API calls
@@ -64,9 +57,19 @@ class WeatherViewModel: ObservableObject {
 				}
 			}
 			.store(in: &cancellables)
-		
 	}
 	
+	/// Function that updates the cityList
+	@MainActor
+	func updateCityList() async {
+		do {
+			cityList = try await fetcher.fetchCitySuggestion(from: searchText)
+		}catch{
+			print("Error fetching: \(error)")
+		}
+	}
+	
+	/// Function that fetches the weather data for the city
 	@MainActor
 	func fetchWeatherForecast(for city: String) async {
 		do {
@@ -83,8 +86,6 @@ class WeatherViewModel: ObservableObject {
 		
 		let latitude = coordinates.latitude
 		let longitude = coordinates.longitude
-		print(latitude)
-		print(longitude)
 		
 		do {
 			forecast = try await fetcher.fetchWeatherWithLocation(latitude: latitude, longitude: longitude)

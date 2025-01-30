@@ -9,16 +9,15 @@ import SwiftUI
 
 struct TopBarMainView: View {
 	@EnvironmentObject var temperatureUnit: TemperatureUnitState
-	@ObservedObject var vm: WeatherViewModel
 	@ObservedObject var cityCoreDataVM: CityCoreDataViewModel
+
+	@Binding var selectedCityTab: String
+	
 	let weather: WeatherModel
 	let isCurrentLocation: Bool?
-	
-	@Binding var searchIsPresented: Bool
-	@Binding var selectedCityTab: String
-//	@State var isCelsius: Bool = true
-	
 	var geo: GeometryProxy
+	
+	@State private var searchIsPresented = false
 	
     var body: some View {
 		VStack {
@@ -45,6 +44,7 @@ struct TopBarMainView: View {
 				Spacer()
 				
 				VStack {
+					// Symbol that shows current location
 					if isCurrentLocation != nil {
 						HStack {
 							Image(systemName: "location.fill")
@@ -54,6 +54,7 @@ struct TopBarMainView: View {
 						.padding(.bottom, 3)
 						
 					}
+					
 					Text(weather.location.name)
 						.font(.custom(Fonts.mediumLight, size: 35))
 					
@@ -71,7 +72,7 @@ struct TopBarMainView: View {
 						.font(.title.weight(.thin))
 				}
 				.sheet(isPresented: $searchIsPresented) {
-					SearchView(vm: vm, cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab, geo: geo, weather: weather)
+					SearchView(cityCoreDataVM: cityCoreDataVM, selectedCityTab: $selectedCityTab, geo: geo, weather: weather)
 				}
 				
 				
